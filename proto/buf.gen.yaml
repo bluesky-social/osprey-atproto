@@ -15,7 +15,7 @@ plugins:
   - remote: buf.build/grpc/python:v1.60.0
     out: ../plugins_atproto/src/rpc
 
-  - remote: buf.build/protocolbuffers/pyi
+  - remote: buf.build/protocolbuffers/pyi:v26.1
     out: ../plugins_atproto/src/rpc
 
   - remote: buf.build/protocolbuffers/go:v1.36.6

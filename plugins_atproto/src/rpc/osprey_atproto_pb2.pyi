@@ -1,12 +1,9 @@
-import datetime
-
 from google.protobuf import timestamp_pb2 as _timestamp_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
-from collections.abc import Iterable as _Iterable, Mapping as _Mapping
-from typing import ClassVar as _ClassVar, Optional as _Optional, Union as _Union
+from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Mapping, Optional as _Optional, Union as _Union
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
@@ -103,7 +100,7 @@ class OspreyInputEvent(_message.Message):
     SEND_TIME_FIELD_NUMBER: _ClassVar[int]
     data: OspreyInputEventData
     send_time: _timestamp_pb2.Timestamp
-    def __init__(self, data: _Optional[_Union[OspreyInputEventData, _Mapping]] = ..., send_time: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
+    def __init__(self, data: _Optional[_Union[OspreyInputEventData, _Mapping]] = ..., send_time: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
 
 class OspreyInputEventData(_message.Message):
     __slots__ = ("action_name", "action_id", "data", "timestamp", "secret_data", "encoding")
@@ -126,7 +123,7 @@ class OspreyInputEventData(_message.Message):
     timestamp: _timestamp_pb2.Timestamp
     secret_data: _containers.ScalarMap[str, str]
     encoding: str
-    def __init__(self, action_name: _Optional[str] = ..., action_id: _Optional[int] = ..., data: _Optional[bytes] = ..., timestamp: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., secret_data: _Optional[_Mapping[str, str]] = ..., encoding: _Optional[str] = ...) -> None: ...
+    def __init__(self, action_name: _Optional[str] = ..., action_id: _Optional[int] = ..., data: _Optional[bytes] = ..., timestamp: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]] = ..., secret_data: _Optional[_Mapping[str, str]] = ..., encoding: _Optional[str] = ...) -> None: ...
 
 class AtprotoLabelEffect(_message.Message):
     __slots__ = ("effect_kind", "subject_kind", "label", "comment", "email", "expiration_in_hours", "rules")
@@ -274,4 +271,4 @@ class ResultEvent(_message.Message):
     acknowledgements: _containers.RepeatedCompositeFieldContainer[AtprotoAcknowledgeEffect]
     reports: _containers.RepeatedCompositeFieldContainer[AtprotoReportEffect]
     bigqueryFlags: _containers.RepeatedCompositeFieldContainer[BigQueryFlagEffect]
-    def __init__(self, send_time: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., action_name: _Optional[str] = ..., action_id: _Optional[int] = ..., did: _Optional[str] = ..., uri: _Optional[str] = ..., cid: _Optional[str] = ..., data: _Optional[bytes] = ..., labels: _Optional[_Iterable[_Union[AtprotoLabelEffect, _Mapping]]] = ..., tags: _Optional[_Iterable[_Union[AtprotoTagEffect, _Mapping]]] = ..., takedowns: _Optional[_Iterable[_Union[AtprotoTakedownEffect, _Mapping]]] = ..., emails: _Optional[_Iterable[_Union[AtprotoEmailEffect, _Mapping]]] = ..., comments: _Optional[_Iterable[_Union[AtprotoCommentEffect, _Mapping]]] = ..., escalations: _Optional[_Iterable[_Union[AtprotoEscalateEffect, _Mapping]]] = ..., acknowledgements: _Optional[_Iterable[_Union[AtprotoAcknowledgeEffect, _Mapping]]] = ..., reports: _Optional[_Iterable[_Union[AtprotoReportEffect, _Mapping]]] = ..., bigqueryFlags: _Optional[_Iterable[_Union[BigQueryFlagEffect, _Mapping]]] = ...) -> None: ...
+    def __init__(self, send_time: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]] = ..., action_name: _Optional[str] = ..., action_id: _Optional[int] = ..., did: _Optional[str] = ..., uri: _Optional[str] = ..., cid: _Optional[str] = ..., data: _Optional[bytes] = ..., labels: _Optional[_Iterable[_Union[AtprotoLabelEffect, _Mapping]]] = ..., tags: _Optional[_Iterable[_Union[AtprotoTagEffect, _Mapping]]] = ..., takedowns: _Optional[_Iterable[_Union[AtprotoTakedownEffect, _Mapping]]] = ..., emails: _Optional[_Iterable[_Union[AtprotoEmailEffect, _Mapping]]] = ..., comments: _Optional[_Iterable[_Union[AtprotoCommentEffect, _Mapping]]] = ..., escalations: _Optional[_Iterable[_Union[AtprotoEscalateEffect, _Mapping]]] = ..., acknowledgements: _Optional[_Iterable[_Union[AtprotoAcknowledgeEffect, _Mapping]]] = ..., reports: _Optional[_Iterable[_Union[AtprotoReportEffect, _Mapping]]] = ..., bigqueryFlags: _Optional[_Iterable[_Union[BigQueryFlagEffect, _Mapping]]] = ...) -> None: ...
