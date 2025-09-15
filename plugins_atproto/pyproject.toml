@@ -1,0 +1,21 @@
+[project]
+name = "plugins_atproto"
+version = "0.1.0"
+description = "Plugins for Osprey to be used with Bluesky or other ATProto projects"
+requires-python = ">=3.11"
+dependencies = [
+    "arrow>=1.3.0",
+    "confluent-kafka>=2.11.1",
+    "maxminddb>=1.5.4",
+    "pluggy==1.5.0",
+    "pymemcache>=4.0.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.entry-points.osprey_plugin]
+register_plugins = "register_plugins"
