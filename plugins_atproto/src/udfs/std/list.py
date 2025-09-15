@@ -8,6 +8,7 @@ from osprey.engine.executor.execution_context import ExecutionContext
 from osprey.engine.udf.arguments import ArgumentsBase
 from osprey.engine.udf.base import UDFBase
 from osprey.worker.lib.osprey_shared.logging import get_logger
+from udfs.std.censorize import regex
 
 logger = get_logger('list')
 
@@ -96,6 +97,32 @@ class ListCache:
 
         return self._regex_cache[cache_key]
 
+    def get_censorized_regex_list(self, list_name: str, plurals: bool, substrings: bool) -> List[re.Pattern[str]]:
+        file_path = f'{RULES_PATH}lists/{list_name}.yaml'
+        cache_key = f'{list_name}-cen'
+        if plurals:
+            cache_key = f'{cache_key}-yp'
+        if substrings:
+            cache_key = f'{cache_key}-ysbs'
+
+        if cache_key not in self._regex_cache:
+            with open(file_path, 'r') as f:
+                data = yaml.safe_load(f)
+
+            compiled_patterns: List[re.Pattern[str]] = []
+            if isinstance(data, list):
+                items = cast(List[str], data)
+                for item in items:
+                    pattern = regex(item, include_plural=plurals, include_substrings=substrings)
+                    compiled_patterns.append(pattern)
+
+            self._regex_cache[cache_key] = compiled_patterns
+            logger.info(
+                f'Loaded and censorized {len(compiled_patterns)} regex patterns from {list_name}. {compiled_patterns}'
+            )
+
+        return self._regex_cache[cache_key]
+
 
 list_cache = ListCache()
 
@@ -177,6 +204,29 @@ class RegexListMatchArguments(ArgumentsBase):
 class RegexListMatch(UDFBase[RegexListMatchArguments, Optional[str]]):
     def execute(self, execution_context: ExecutionContext, arguments: RegexListMatchArguments) -> Optional[str]:
         patterns = list_cache.get_regex_list(arguments.list, case_sensitive=arguments.case_sensitive)
+
+        for phrase in arguments.phrases:
+            for pattern in patterns:
+                if pattern.search(phrase):
+                    return pattern.pattern
+
+        return None
+
+
+class CensorizedListMatchArguments(ArgumentsBase):
+    list: str
+    phrases: List[str]
+    plurals: bool = False
+    substrings: bool = False
+
+
+class CensorizedListMatch(UDFBase[CensorizedListMatchArguments, Optional[str]]):
+    def execute(self, execution_context: ExecutionContext, arguments: CensorizedListMatchArguments) -> Optional[str]:
+        patterns = list_cache.get_censorized_regex_list(
+            list_name=arguments.list,
+            plurals=arguments.plurals,
+            substrings=arguments.substrings,
+        )
 
         for phrase in arguments.phrases:
             for pattern in patterns:

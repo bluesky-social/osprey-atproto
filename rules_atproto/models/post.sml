@@ -9,21 +9,7 @@ PostText: str = JsonData(
   coerce_type=True,
 )
 
-PostTextCleaned: str = StringClean(
-  s=PostText,
-  space=True, # This removes _duplicate spaces_, not singles.
-  homoglyph=True,
-  unicode_normalize=True,
-
-  # Just for reference, here are other params with their defaults
-  remove_emoji=False,
-  l33t=False,
-  unidecode=False,
-  upper=False,
-  lower=False,
-  remove_space=False, # This does _all_ spaces
-  remove_punctuation=False,
-)
+PostTextCleaned: str = CleanString(s=PostText)
 
 RootUri: Entity[str] = EntityJson(
   type='Uri',

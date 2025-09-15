@@ -32,8 +32,9 @@ from udfs.std.cache import (
     IncrementWindow,
     cache_client,
 )
+from udfs.std.censorize import CleanString
 from udfs.std.concat import ConcatStringLists
-from udfs.std.list import ListContains, RegexListMatch, SimpleListContains
+from udfs.std.list import CensorizedListMatch, ListContains, RegexListMatch, SimpleListContains
 from udfs.std.log import Log
 from udfs.std.text import ExtractDomains, ExtractEmoji, ForceString, TextContains
 from udfs.std.timestamp_age import TimestampAge
@@ -48,11 +49,13 @@ def register_udfs():
         #
         TextContains,
         Tokenize,
+        CleanString,
         ExtractDomains,
         ExtractEmoji,
         ListContains,
         SimpleListContains,
         RegexListMatch,
+        CensorizedListMatch,
         ForceString,
         CacheGetStr,
         CacheGetInt,
