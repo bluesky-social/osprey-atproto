@@ -1,0 +1,27 @@
+version: v2
+managed:
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      module: buf.build/bufbuild/confluent
+      value: buf.build/gen/go/bufbuild/confluent/protocolbuffers/go
+  disable:
+    - file_option: go_package
+      module: buf.build/bufbuild/protovalidate
+plugins:
+  - remote: buf.build/protocolbuffers/python
+    out: python
+  
+  - remote: buf.build/grpc/python
+    out: python
+
+  - remote: buf.build/protocolbuffers/pyi
+    out: python
+
+  - remote: buf.build/protocolbuffers/go:v1.36.6
+    out: go
+    opt: paths=source_relative
+
+  - remote: buf.build/grpc/go
+    out: go
+    opt: paths=source_relative

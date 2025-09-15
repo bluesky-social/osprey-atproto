@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+// Implements types for the Bufsteam demo.
+package osprey;
+option go_package = "./;osprey";
+
+// This imports protovalidate custom options.
+//
+// See [github.com/bufbuild/protovalidate](https://github.com/bufbuild/protovalidate)
+// for more details.
+import "buf/validate/validate.proto";
+
+import "google/protobuf/timestamp.proto";
+
+message AtprotoLabelEffect {
+  AtprotoEffectKind effect_kind = 1;
+  AtprotoSubjectKind subject_kind = 2;
+  AtprotoLabel label = 3;
+  string comment = 4;
+  optional AtprotoEmail email = 5;
+  optional int64 expiration_in_hours = 6;
+  repeated string rules = 7;
+}
+
+message AtprotoTagEffect {
+  AtprotoEffectKind effect_kind = 1;
+  AtprotoSubjectKind subject_kind = 2;
+  string tag = 3;
+  optional string comment = 4;
+  repeated string rules = 5;
+}
+
+message AtprotoTakedownEffect {
+  AtprotoEffectKind effect_kind = 1;
+  AtprotoSubjectKind subject_kind = 2;
+  string comment = 4;
+  optional AtprotoEmail email = 5;
+  repeated string rules = 6;
+}
+
+message AtprotoEmailEffect {
+  AtprotoEmail email = 1;
+  optional string comment = 2;
+  repeated string rules = 3;
+}
+
+message AtprotoCommentEffect {
+  AtprotoSubjectKind subject_kind = 1;
+  string comment = 2;
+  repeated string rules = 3;
+}
+
+message AtprotoEscalateEffect {
+  AtprotoSubjectKind subject_kind = 1;
+  optional string comment = 2;
+  repeated string rules = 3;
+}
+
+message AtprotoAcknowledgeEffect {
+  AtprotoSubjectKind subject_kind = 1;
+  optional string comment = 2;
+  repeated string rules = 3;
+}
+
+message AtprotoReportEffect {
+  AtprotoSubjectKind subject_kind = 1;
+  AtprotoReportKind report_kind = 2;
+  string comment = 3;
+  optional int64 priority_score = 4;
+  repeated string rules = 5;
+}
+
+message BigQueryFlagEffect {
+  AtprotoSubjectKind subject_kind = 1;
+  string tag = 2;
+  optional string comment = 3;
+  repeated string rules = 4;
+}
+
+message ResultEvent {
+  google.protobuf.Timestamp send_time = 1;
+  string action_name = 2;
+  int64 action_id = 3;
+  string did = 4;
+  string uri = 5;
+  string cid = 6;
+  bytes data = 7;
+  repeated AtprotoLabelEffect labels = 8;
+  repeated AtprotoTagEffect tags = 9;
+  repeated AtprotoTakedownEffect takedowns = 10;
+  repeated AtprotoEmailEffect emails = 11;
+  repeated AtprotoCommentEffect comments = 12;
+  repeated AtprotoEscalateEffect escalations = 13;
+  repeated AtprotoAcknowledgeEffect acknowledgements = 14;
+  repeated AtprotoReportEffect reports = 15;
+  repeated BigQueryFlagEffect bigqueryFlags = 16; 
+}
+
+enum AtprotoSubjectKind {
+  ATPROTO_SUBJECT_KIND_NONE = 0;
+  ATPROTO_SUBJECT_KIND_ACTOR = 1;
+  ATPROTO_SUBJECT_KIND_RECORD = 2;
+}
+
+enum AtprotoLabel {
+  ATPROTO_LABEL_NONE = 0;
+  ATPROTO_LABEL_SPAM = 1;
+  ATPROTO_LABEL_RUDE = 2;
+  ATPROTO_LABEL_PORN = 3;
+  ATPROTO_LABEL_SEXUAL = 4;
+  ATPROTO_LABEL_WARN = 5;
+  ATPROTO_LABEL_HIDE = 6;
+  ATPROTO_LABEL_NEEDS_REVIEW = 7;
+}
+
+enum AtprotoEffectKind {
+  ATPROTO_EFFECT_KIND_NONE = 0;
+  ATPROTO_EFFECT_KIND_ADD = 1;
+  ATPROTO_EFFECT_KIND_REMOVE = 2;
+}
+
+enum AtprotoEmail {
+  ATPROTO_EMAIL_NONE = 0;
+  ATPROTO_EMAIL_SPAM_REPLY = 68;
+  ATPROTO_EMAIL_SPAM_TAKEDOWN = 261;
+  ATPROTO_EMAIL_SPAM_FAKE = 63;
+  ATPROTO_EMAIL_SPAM_LABEL = 318;
+  ATPROTO_EMAIL_SPAM_LABEL_24_HOURS = 302;
+  ATPROTO_EMAIL_SPAM_LABEL_72_HOURS=  313;
+  ATPROTO_EMAIL_ID_REQUEST = 281;
+  ATPROTO_EMAIL_IMPERSONATION_LABEL = 31;
+  ATPROTO_EMAIL_AUTOMOD_TAKEDOWN = 288;
+  ATPROTO_EMAIL_REINSTATEMENT = 60;
+  ATPROTO_EMAIL_THREAT_POST_TAKEDOWN = 26;
+  ATPROTO_EMAIL_PEDO_ACCOUNT_TAKEDOWN = 43;
+  ATPROTO_EMAIL_DMS_DISABLED = 295;
+  ATPROTO_EMAIL_TOXIC_LIST_HIDE = 51;
+}
+
+enum AtprotoReportKind {
+  ATPROTO_REPORT_KIND_NONE = 0;
+  ATPROTO_REPORT_KIND_SPAM = 1;
+  ATPROTO_REPORT_KIND_VIOLATION = 2;
+  ATPROTO_REPORT_KIND_MISLEADING = 3;
+  ATPROTO_REPORT_KIND_SEXUAL = 4;
+  ATPROTO_REPORT_KIND_RUDE = 5;
+  ATPROTO_REPORT_KIND_OTHER = 6;
+}
