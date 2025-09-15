@@ -1,6 +1,5 @@
 import datetime
 
-from buf.validate import validate_pb2 as _validate_pb2
 from google.protobuf import timestamp_pb2 as _timestamp_pb2
 from google.protobuf.internal import containers as _containers
 from google.protobuf.internal import enum_type_wrapper as _enum_type_wrapper
@@ -97,6 +96,37 @@ ATPROTO_REPORT_KIND_MISLEADING: AtprotoReportKind
 ATPROTO_REPORT_KIND_SEXUAL: AtprotoReportKind
 ATPROTO_REPORT_KIND_RUDE: AtprotoReportKind
 ATPROTO_REPORT_KIND_OTHER: AtprotoReportKind
+
+class OspreyInputEvent(_message.Message):
+    __slots__ = ("data", "send_time")
+    DATA_FIELD_NUMBER: _ClassVar[int]
+    SEND_TIME_FIELD_NUMBER: _ClassVar[int]
+    data: OspreyInputEventData
+    send_time: _timestamp_pb2.Timestamp
+    def __init__(self, data: _Optional[_Union[OspreyInputEventData, _Mapping]] = ..., send_time: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ...) -> None: ...
+
+class OspreyInputEventData(_message.Message):
+    __slots__ = ("action_name", "action_id", "data", "timestamp", "secret_data", "encoding")
+    class SecretDataEntry(_message.Message):
+        __slots__ = ("key", "value")
+        KEY_FIELD_NUMBER: _ClassVar[int]
+        VALUE_FIELD_NUMBER: _ClassVar[int]
+        key: str
+        value: str
+        def __init__(self, key: _Optional[str] = ..., value: _Optional[str] = ...) -> None: ...
+    ACTION_NAME_FIELD_NUMBER: _ClassVar[int]
+    ACTION_ID_FIELD_NUMBER: _ClassVar[int]
+    DATA_FIELD_NUMBER: _ClassVar[int]
+    TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
+    SECRET_DATA_FIELD_NUMBER: _ClassVar[int]
+    ENCODING_FIELD_NUMBER: _ClassVar[int]
+    action_name: str
+    action_id: int
+    data: bytes
+    timestamp: _timestamp_pb2.Timestamp
+    secret_data: _containers.ScalarMap[str, str]
+    encoding: str
+    def __init__(self, action_name: _Optional[str] = ..., action_id: _Optional[int] = ..., data: _Optional[bytes] = ..., timestamp: _Optional[_Union[datetime.datetime, _timestamp_pb2.Timestamp, _Mapping]] = ..., secret_data: _Optional[_Mapping[str, str]] = ..., encoding: _Optional[str] = ...) -> None: ...
 
 class AtprotoLabelEffect(_message.Message):
     __slots__ = ("effect_kind", "subject_kind", "label", "comment", "email", "expiration_in_hours", "rules")

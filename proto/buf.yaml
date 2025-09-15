@@ -11,4 +11,3 @@ lint:
     - PACKAGE_DIRECTORY_MATCH
 deps:
   - buf.build/bufbuild/confluent
-  - buf.build/bufbuild/protovalidate

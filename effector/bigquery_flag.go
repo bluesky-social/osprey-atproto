@@ -42,7 +42,6 @@ func NewBigQueryFlagClient(args *BigQueryFlagClientArgs) (*BigQueryFlagClient, e
 			TableID:         "tagged_posts",
 			MaxPendingSends: 100,
 		},
-		// We send _all_ events to BigQuery, so we probably don't want this to be anything under the average number of events we process per second
 		BatchSize: 1,
 		Logger:    logger,
 	})

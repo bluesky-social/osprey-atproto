@@ -2,7 +2,14 @@ from dataclasses import dataclass
 from typing import List, Optional, Self, cast
 
 from ddtrace.internal.logger import get_logger
-from osprey.bluesky.osprey_atproto_pb2 import (
+from osprey.engine.executor.custom_extracted_features import CustomExtractedFeature
+from osprey.engine.executor.execution_context import ExecutionContext
+from osprey.engine.language_types.effects import EffectToCustomExtractedFeatureBase
+from osprey.engine.stdlib.udfs.categories import UdfCategories
+from osprey.engine.udf.arguments import ArgumentsBase
+from osprey.engine.udf.base import UDFBase
+from osprey.engine.utils.types import add_slots
+from rpc.osprey_atproto_pb2 import (
     ATPROTO_EFFECT_KIND_ADD,
     ATPROTO_REPORT_KIND_MISLEADING,
     ATPROTO_REPORT_KIND_OTHER,
@@ -13,13 +20,6 @@ from osprey.bluesky.osprey_atproto_pb2 import (
     AtprotoEffectKind,
     AtprotoReportKind,
 )
-from osprey.engine.executor.custom_extracted_features import CustomExtractedFeature
-from osprey.engine.executor.execution_context import ExecutionContext
-from osprey.engine.language_types.effects import EffectToCustomExtractedFeatureBase
-from osprey.engine.stdlib.udfs.categories import UdfCategories
-from osprey.engine.udf.arguments import ArgumentsBase
-from osprey.engine.udf.base import UDFBase
-from osprey.engine.utils.types import add_slots
 
 logger = get_logger('atproto_report')
 

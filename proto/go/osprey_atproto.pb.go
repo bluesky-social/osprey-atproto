@@ -9,7 +9,6 @@
 package osprey
 
 import (
-	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
@@ -333,6 +332,142 @@ func (AtprotoReportKind) EnumDescriptor() ([]byte, []int) {
 	return file_osprey_atproto_proto_rawDescGZIP(), []int{4}
 }
 
+type OspreyInputEvent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Data          *OspreyInputEventData  `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	SendTime      *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=send_time,json=sendTime,proto3" json:"send_time,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OspreyInputEvent) Reset() {
+	*x = OspreyInputEvent{}
+	mi := &file_osprey_atproto_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OspreyInputEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OspreyInputEvent) ProtoMessage() {}
+
+func (x *OspreyInputEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OspreyInputEvent.ProtoReflect.Descriptor instead.
+func (*OspreyInputEvent) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *OspreyInputEvent) GetData() *OspreyInputEventData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *OspreyInputEvent) GetSendTime() *timestamppb.Timestamp {
+	if x != nil {
+		return x.SendTime
+	}
+	return nil
+}
+
+type OspreyInputEventData struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ActionName    string                 `protobuf:"bytes,1,opt,name=action_name,json=actionName,proto3" json:"action_name,omitempty"`
+	ActionId      int64                  `protobuf:"varint,2,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
+	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	SecretData    map[string]string      `protobuf:"bytes,5,rep,name=secret_data,json=secretData,proto3" json:"secret_data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Encoding      string                 `protobuf:"bytes,6,opt,name=encoding,proto3" json:"encoding,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *OspreyInputEventData) Reset() {
+	*x = OspreyInputEventData{}
+	mi := &file_osprey_atproto_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *OspreyInputEventData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*OspreyInputEventData) ProtoMessage() {}
+
+func (x *OspreyInputEventData) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use OspreyInputEventData.ProtoReflect.Descriptor instead.
+func (*OspreyInputEventData) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *OspreyInputEventData) GetActionName() string {
+	if x != nil {
+		return x.ActionName
+	}
+	return ""
+}
+
+func (x *OspreyInputEventData) GetActionId() int64 {
+	if x != nil {
+		return x.ActionId
+	}
+	return 0
+}
+
+func (x *OspreyInputEventData) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *OspreyInputEventData) GetTimestamp() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Timestamp
+	}
+	return nil
+}
+
+func (x *OspreyInputEventData) GetSecretData() map[string]string {
+	if x != nil {
+		return x.SecretData
+	}
+	return nil
+}
+
+func (x *OspreyInputEventData) GetEncoding() string {
+	if x != nil {
+		return x.Encoding
+	}
+	return ""
+}
+
 type AtprotoLabelEffect struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	EffectKind        AtprotoEffectKind      `protobuf:"varint,1,opt,name=effect_kind,json=effectKind,proto3,enum=osprey.AtprotoEffectKind" json:"effect_kind,omitempty"`
@@ -348,7 +483,7 @@ type AtprotoLabelEffect struct {
 
 func (x *AtprotoLabelEffect) Reset() {
 	*x = AtprotoLabelEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[0]
+	mi := &file_osprey_atproto_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -360,7 +495,7 @@ func (x *AtprotoLabelEffect) String() string {
 func (*AtprotoLabelEffect) ProtoMessage() {}
 
 func (x *AtprotoLabelEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[0]
+	mi := &file_osprey_atproto_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -373,7 +508,7 @@ func (x *AtprotoLabelEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AtprotoLabelEffect.ProtoReflect.Descriptor instead.
 func (*AtprotoLabelEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{0}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AtprotoLabelEffect) GetEffectKind() AtprotoEffectKind {
@@ -438,7 +573,7 @@ type AtprotoTagEffect struct {
 
 func (x *AtprotoTagEffect) Reset() {
 	*x = AtprotoTagEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[1]
+	mi := &file_osprey_atproto_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -450,7 +585,7 @@ func (x *AtprotoTagEffect) String() string {
 func (*AtprotoTagEffect) ProtoMessage() {}
 
 func (x *AtprotoTagEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[1]
+	mi := &file_osprey_atproto_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -463,7 +598,7 @@ func (x *AtprotoTagEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AtprotoTagEffect.ProtoReflect.Descriptor instead.
 func (*AtprotoTagEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{1}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AtprotoTagEffect) GetEffectKind() AtprotoEffectKind {
@@ -514,7 +649,7 @@ type AtprotoTakedownEffect struct {
 
 func (x *AtprotoTakedownEffect) Reset() {
 	*x = AtprotoTakedownEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[2]
+	mi := &file_osprey_atproto_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -526,7 +661,7 @@ func (x *AtprotoTakedownEffect) String() string {
 func (*AtprotoTakedownEffect) ProtoMessage() {}
 
 func (x *AtprotoTakedownEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[2]
+	mi := &file_osprey_atproto_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -539,7 +674,7 @@ func (x *AtprotoTakedownEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AtprotoTakedownEffect.ProtoReflect.Descriptor instead.
 func (*AtprotoTakedownEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{2}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *AtprotoTakedownEffect) GetEffectKind() AtprotoEffectKind {
@@ -588,7 +723,7 @@ type AtprotoEmailEffect struct {
 
 func (x *AtprotoEmailEffect) Reset() {
 	*x = AtprotoEmailEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[3]
+	mi := &file_osprey_atproto_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -600,7 +735,7 @@ func (x *AtprotoEmailEffect) String() string {
 func (*AtprotoEmailEffect) ProtoMessage() {}
 
 func (x *AtprotoEmailEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[3]
+	mi := &file_osprey_atproto_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -613,7 +748,7 @@ func (x *AtprotoEmailEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AtprotoEmailEffect.ProtoReflect.Descriptor instead.
 func (*AtprotoEmailEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{3}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *AtprotoEmailEffect) GetEmail() AtprotoEmail {
@@ -648,7 +783,7 @@ type AtprotoCommentEffect struct {
 
 func (x *AtprotoCommentEffect) Reset() {
 	*x = AtprotoCommentEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[4]
+	mi := &file_osprey_atproto_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -660,7 +795,7 @@ func (x *AtprotoCommentEffect) String() string {
 func (*AtprotoCommentEffect) ProtoMessage() {}
 
 func (x *AtprotoCommentEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[4]
+	mi := &file_osprey_atproto_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -673,7 +808,7 @@ func (x *AtprotoCommentEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AtprotoCommentEffect.ProtoReflect.Descriptor instead.
 func (*AtprotoCommentEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{4}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *AtprotoCommentEffect) GetSubjectKind() AtprotoSubjectKind {
@@ -708,7 +843,7 @@ type AtprotoEscalateEffect struct {
 
 func (x *AtprotoEscalateEffect) Reset() {
 	*x = AtprotoEscalateEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[5]
+	mi := &file_osprey_atproto_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -720,7 +855,7 @@ func (x *AtprotoEscalateEffect) String() string {
 func (*AtprotoEscalateEffect) ProtoMessage() {}
 
 func (x *AtprotoEscalateEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[5]
+	mi := &file_osprey_atproto_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -733,7 +868,7 @@ func (x *AtprotoEscalateEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AtprotoEscalateEffect.ProtoReflect.Descriptor instead.
 func (*AtprotoEscalateEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{5}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *AtprotoEscalateEffect) GetSubjectKind() AtprotoSubjectKind {
@@ -768,7 +903,7 @@ type AtprotoAcknowledgeEffect struct {
 
 func (x *AtprotoAcknowledgeEffect) Reset() {
 	*x = AtprotoAcknowledgeEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[6]
+	mi := &file_osprey_atproto_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -780,7 +915,7 @@ func (x *AtprotoAcknowledgeEffect) String() string {
 func (*AtprotoAcknowledgeEffect) ProtoMessage() {}
 
 func (x *AtprotoAcknowledgeEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[6]
+	mi := &file_osprey_atproto_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -793,7 +928,7 @@ func (x *AtprotoAcknowledgeEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AtprotoAcknowledgeEffect.ProtoReflect.Descriptor instead.
 func (*AtprotoAcknowledgeEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{6}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *AtprotoAcknowledgeEffect) GetSubjectKind() AtprotoSubjectKind {
@@ -830,7 +965,7 @@ type AtprotoReportEffect struct {
 
 func (x *AtprotoReportEffect) Reset() {
 	*x = AtprotoReportEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[7]
+	mi := &file_osprey_atproto_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -842,7 +977,7 @@ func (x *AtprotoReportEffect) String() string {
 func (*AtprotoReportEffect) ProtoMessage() {}
 
 func (x *AtprotoReportEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[7]
+	mi := &file_osprey_atproto_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -855,7 +990,7 @@ func (x *AtprotoReportEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AtprotoReportEffect.ProtoReflect.Descriptor instead.
 func (*AtprotoReportEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{7}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *AtprotoReportEffect) GetSubjectKind() AtprotoSubjectKind {
@@ -905,7 +1040,7 @@ type BigQueryFlagEffect struct {
 
 func (x *BigQueryFlagEffect) Reset() {
 	*x = BigQueryFlagEffect{}
-	mi := &file_osprey_atproto_proto_msgTypes[8]
+	mi := &file_osprey_atproto_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -917,7 +1052,7 @@ func (x *BigQueryFlagEffect) String() string {
 func (*BigQueryFlagEffect) ProtoMessage() {}
 
 func (x *BigQueryFlagEffect) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[8]
+	mi := &file_osprey_atproto_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -930,7 +1065,7 @@ func (x *BigQueryFlagEffect) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BigQueryFlagEffect.ProtoReflect.Descriptor instead.
 func (*BigQueryFlagEffect) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{8}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *BigQueryFlagEffect) GetSubjectKind() AtprotoSubjectKind {
@@ -985,7 +1120,7 @@ type ResultEvent struct {
 
 func (x *ResultEvent) Reset() {
 	*x = ResultEvent{}
-	mi := &file_osprey_atproto_proto_msgTypes[9]
+	mi := &file_osprey_atproto_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -997,7 +1132,7 @@ func (x *ResultEvent) String() string {
 func (*ResultEvent) ProtoMessage() {}
 
 func (x *ResultEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_osprey_atproto_proto_msgTypes[9]
+	mi := &file_osprey_atproto_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1010,7 +1145,7 @@ func (x *ResultEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ResultEvent.ProtoReflect.Descriptor instead.
 func (*ResultEvent) Descriptor() ([]byte, []int) {
-	return file_osprey_atproto_proto_rawDescGZIP(), []int{9}
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ResultEvent) GetSendTime() *timestamppb.Timestamp {
@@ -1129,7 +1264,22 @@ var File_osprey_atproto_proto protoreflect.FileDescriptor
 
 const file_osprey_atproto_proto_rawDesc = "" +
 	"\n" +
-	"\x14osprey_atproto.proto\x12\x06osprey\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf3\x02\n" +
+	"\x14osprey_atproto.proto\x12\x06osprey\x1a\x1fgoogle/protobuf/timestamp.proto\"}\n" +
+	"\x10OspreyInputEvent\x120\n" +
+	"\x04data\x18\x01 \x01(\v2\x1c.osprey.OspreyInputEventDataR\x04data\x127\n" +
+	"\tsend_time\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\bsendTime\"\xcc\x02\n" +
+	"\x14OspreyInputEventData\x12\x1f\n" +
+	"\vaction_name\x18\x01 \x01(\tR\n" +
+	"actionName\x12\x1b\n" +
+	"\taction_id\x18\x02 \x01(\x03R\bactionId\x12\x12\n" +
+	"\x04data\x18\x03 \x01(\fR\x04data\x128\n" +
+	"\ttimestamp\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12M\n" +
+	"\vsecret_data\x18\x05 \x03(\v2,.osprey.OspreyInputEventData.SecretDataEntryR\n" +
+	"secretData\x12\x1a\n" +
+	"\bencoding\x18\x06 \x01(\tR\bencoding\x1a=\n" +
+	"\x0fSecretDataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xf3\x02\n" +
 	"\x12AtprotoLabelEffect\x12:\n" +
 	"\veffect_kind\x18\x01 \x01(\x0e2\x19.osprey.AtprotoEffectKindR\n" +
 	"effectKind\x12=\n" +
@@ -1271,57 +1421,64 @@ func file_osprey_atproto_proto_rawDescGZIP() []byte {
 }
 
 var file_osprey_atproto_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_osprey_atproto_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_osprey_atproto_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_osprey_atproto_proto_goTypes = []any{
 	(AtprotoSubjectKind)(0),          // 0: osprey.AtprotoSubjectKind
 	(AtprotoLabel)(0),                // 1: osprey.AtprotoLabel
 	(AtprotoEffectKind)(0),           // 2: osprey.AtprotoEffectKind
 	(AtprotoEmail)(0),                // 3: osprey.AtprotoEmail
 	(AtprotoReportKind)(0),           // 4: osprey.AtprotoReportKind
-	(*AtprotoLabelEffect)(nil),       // 5: osprey.AtprotoLabelEffect
-	(*AtprotoTagEffect)(nil),         // 6: osprey.AtprotoTagEffect
-	(*AtprotoTakedownEffect)(nil),    // 7: osprey.AtprotoTakedownEffect
-	(*AtprotoEmailEffect)(nil),       // 8: osprey.AtprotoEmailEffect
-	(*AtprotoCommentEffect)(nil),     // 9: osprey.AtprotoCommentEffect
-	(*AtprotoEscalateEffect)(nil),    // 10: osprey.AtprotoEscalateEffect
-	(*AtprotoAcknowledgeEffect)(nil), // 11: osprey.AtprotoAcknowledgeEffect
-	(*AtprotoReportEffect)(nil),      // 12: osprey.AtprotoReportEffect
-	(*BigQueryFlagEffect)(nil),       // 13: osprey.BigQueryFlagEffect
-	(*ResultEvent)(nil),              // 14: osprey.ResultEvent
-	(*timestamppb.Timestamp)(nil),    // 15: google.protobuf.Timestamp
+	(*OspreyInputEvent)(nil),         // 5: osprey.OspreyInputEvent
+	(*OspreyInputEventData)(nil),     // 6: osprey.OspreyInputEventData
+	(*AtprotoLabelEffect)(nil),       // 7: osprey.AtprotoLabelEffect
+	(*AtprotoTagEffect)(nil),         // 8: osprey.AtprotoTagEffect
+	(*AtprotoTakedownEffect)(nil),    // 9: osprey.AtprotoTakedownEffect
+	(*AtprotoEmailEffect)(nil),       // 10: osprey.AtprotoEmailEffect
+	(*AtprotoCommentEffect)(nil),     // 11: osprey.AtprotoCommentEffect
+	(*AtprotoEscalateEffect)(nil),    // 12: osprey.AtprotoEscalateEffect
+	(*AtprotoAcknowledgeEffect)(nil), // 13: osprey.AtprotoAcknowledgeEffect
+	(*AtprotoReportEffect)(nil),      // 14: osprey.AtprotoReportEffect
+	(*BigQueryFlagEffect)(nil),       // 15: osprey.BigQueryFlagEffect
+	(*ResultEvent)(nil),              // 16: osprey.ResultEvent
+	nil,                              // 17: osprey.OspreyInputEventData.SecretDataEntry
+	(*timestamppb.Timestamp)(nil),    // 18: google.protobuf.Timestamp
 }
 var file_osprey_atproto_proto_depIdxs = []int32{
-	2,  // 0: osprey.AtprotoLabelEffect.effect_kind:type_name -> osprey.AtprotoEffectKind
-	0,  // 1: osprey.AtprotoLabelEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	1,  // 2: osprey.AtprotoLabelEffect.label:type_name -> osprey.AtprotoLabel
-	3,  // 3: osprey.AtprotoLabelEffect.email:type_name -> osprey.AtprotoEmail
-	2,  // 4: osprey.AtprotoTagEffect.effect_kind:type_name -> osprey.AtprotoEffectKind
-	0,  // 5: osprey.AtprotoTagEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	2,  // 6: osprey.AtprotoTakedownEffect.effect_kind:type_name -> osprey.AtprotoEffectKind
-	0,  // 7: osprey.AtprotoTakedownEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	3,  // 8: osprey.AtprotoTakedownEffect.email:type_name -> osprey.AtprotoEmail
-	3,  // 9: osprey.AtprotoEmailEffect.email:type_name -> osprey.AtprotoEmail
-	0,  // 10: osprey.AtprotoCommentEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	0,  // 11: osprey.AtprotoEscalateEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	0,  // 12: osprey.AtprotoAcknowledgeEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	0,  // 13: osprey.AtprotoReportEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	4,  // 14: osprey.AtprotoReportEffect.report_kind:type_name -> osprey.AtprotoReportKind
-	0,  // 15: osprey.BigQueryFlagEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	15, // 16: osprey.ResultEvent.send_time:type_name -> google.protobuf.Timestamp
-	5,  // 17: osprey.ResultEvent.labels:type_name -> osprey.AtprotoLabelEffect
-	6,  // 18: osprey.ResultEvent.tags:type_name -> osprey.AtprotoTagEffect
-	7,  // 19: osprey.ResultEvent.takedowns:type_name -> osprey.AtprotoTakedownEffect
-	8,  // 20: osprey.ResultEvent.emails:type_name -> osprey.AtprotoEmailEffect
-	9,  // 21: osprey.ResultEvent.comments:type_name -> osprey.AtprotoCommentEffect
-	10, // 22: osprey.ResultEvent.escalations:type_name -> osprey.AtprotoEscalateEffect
-	11, // 23: osprey.ResultEvent.acknowledgements:type_name -> osprey.AtprotoAcknowledgeEffect
-	12, // 24: osprey.ResultEvent.reports:type_name -> osprey.AtprotoReportEffect
-	13, // 25: osprey.ResultEvent.bigqueryFlags:type_name -> osprey.BigQueryFlagEffect
-	26, // [26:26] is the sub-list for method output_type
-	26, // [26:26] is the sub-list for method input_type
-	26, // [26:26] is the sub-list for extension type_name
-	26, // [26:26] is the sub-list for extension extendee
-	0,  // [0:26] is the sub-list for field type_name
+	6,  // 0: osprey.OspreyInputEvent.data:type_name -> osprey.OspreyInputEventData
+	18, // 1: osprey.OspreyInputEvent.send_time:type_name -> google.protobuf.Timestamp
+	18, // 2: osprey.OspreyInputEventData.timestamp:type_name -> google.protobuf.Timestamp
+	17, // 3: osprey.OspreyInputEventData.secret_data:type_name -> osprey.OspreyInputEventData.SecretDataEntry
+	2,  // 4: osprey.AtprotoLabelEffect.effect_kind:type_name -> osprey.AtprotoEffectKind
+	0,  // 5: osprey.AtprotoLabelEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
+	1,  // 6: osprey.AtprotoLabelEffect.label:type_name -> osprey.AtprotoLabel
+	3,  // 7: osprey.AtprotoLabelEffect.email:type_name -> osprey.AtprotoEmail
+	2,  // 8: osprey.AtprotoTagEffect.effect_kind:type_name -> osprey.AtprotoEffectKind
+	0,  // 9: osprey.AtprotoTagEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
+	2,  // 10: osprey.AtprotoTakedownEffect.effect_kind:type_name -> osprey.AtprotoEffectKind
+	0,  // 11: osprey.AtprotoTakedownEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
+	3,  // 12: osprey.AtprotoTakedownEffect.email:type_name -> osprey.AtprotoEmail
+	3,  // 13: osprey.AtprotoEmailEffect.email:type_name -> osprey.AtprotoEmail
+	0,  // 14: osprey.AtprotoCommentEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
+	0,  // 15: osprey.AtprotoEscalateEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
+	0,  // 16: osprey.AtprotoAcknowledgeEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
+	0,  // 17: osprey.AtprotoReportEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
+	4,  // 18: osprey.AtprotoReportEffect.report_kind:type_name -> osprey.AtprotoReportKind
+	0,  // 19: osprey.BigQueryFlagEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
+	18, // 20: osprey.ResultEvent.send_time:type_name -> google.protobuf.Timestamp
+	7,  // 21: osprey.ResultEvent.labels:type_name -> osprey.AtprotoLabelEffect
+	8,  // 22: osprey.ResultEvent.tags:type_name -> osprey.AtprotoTagEffect
+	9,  // 23: osprey.ResultEvent.takedowns:type_name -> osprey.AtprotoTakedownEffect
+	10, // 24: osprey.ResultEvent.emails:type_name -> osprey.AtprotoEmailEffect
+	11, // 25: osprey.ResultEvent.comments:type_name -> osprey.AtprotoCommentEffect
+	12, // 26: osprey.ResultEvent.escalations:type_name -> osprey.AtprotoEscalateEffect
+	13, // 27: osprey.ResultEvent.acknowledgements:type_name -> osprey.AtprotoAcknowledgeEffect
+	14, // 28: osprey.ResultEvent.reports:type_name -> osprey.AtprotoReportEffect
+	15, // 29: osprey.ResultEvent.bigqueryFlags:type_name -> osprey.BigQueryFlagEffect
+	30, // [30:30] is the sub-list for method output_type
+	30, // [30:30] is the sub-list for method input_type
+	30, // [30:30] is the sub-list for extension type_name
+	30, // [30:30] is the sub-list for extension extendee
+	0,  // [0:30] is the sub-list for field type_name
 }
 
 func init() { file_osprey_atproto_proto_init() }
@@ -1329,21 +1486,21 @@ func file_osprey_atproto_proto_init() {
 	if File_osprey_atproto_proto != nil {
 		return
 	}
-	file_osprey_atproto_proto_msgTypes[0].OneofWrappers = []any{}
-	file_osprey_atproto_proto_msgTypes[1].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[2].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[3].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[4].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[5].OneofWrappers = []any{}
-	file_osprey_atproto_proto_msgTypes[6].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[7].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[8].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[9].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[10].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_osprey_atproto_proto_rawDesc), len(file_osprey_atproto_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   10,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

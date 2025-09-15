@@ -9,14 +9,14 @@ managed:
     - file_option: go_package
       module: buf.build/bufbuild/protovalidate
 plugins:
-  - remote: buf.build/protocolbuffers/python
-    out: python
+  - remote: buf.build/protocolbuffers/python:v26.1
+    out: ../plugins_atproto/src/rpc
   
-  - remote: buf.build/grpc/python
-    out: python
+  - remote: buf.build/grpc/python:v1.60.0
+    out: ../plugins_atproto/src/rpc
 
   - remote: buf.build/protocolbuffers/pyi
-    out: python
+    out: ../plugins_atproto/src/rpc
 
   - remote: buf.build/protocolbuffers/go:v1.36.6
     out: go

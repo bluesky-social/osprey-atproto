@@ -4,13 +4,21 @@ syntax = "proto3";
 package osprey;
 option go_package = "./;osprey";
 
-// This imports protovalidate custom options.
-//
-// See [github.com/bufbuild/protovalidate](https://github.com/bufbuild/protovalidate)
-// for more details.
-import "buf/validate/validate.proto";
-
 import "google/protobuf/timestamp.proto";
+
+message OspreyInputEvent {
+  OspreyInputEventData data = 1;
+  google.protobuf.Timestamp send_time = 2;
+}
+
+message OspreyInputEventData {
+  string action_name = 1;
+  int64 action_id = 2;
+  bytes data = 3;
+  google.protobuf.Timestamp timestamp = 4;
+  map<string, string> secret_data = 5;
+  string encoding = 6;
+}
 
 message AtprotoLabelEffect {
   AtprotoEffectKind effect_kind = 1;
