@@ -47,7 +47,8 @@ type OzoneClientArgs struct {
 }
 
 type ModToolMeta struct {
-	Rules string `json:"rules"`
+	Rules    string `json:"rules"`
+	ActionID int64  `json:"actionId"`
 }
 
 func NewOzoneClient(ctx context.Context, args *OzoneClientArgs) (*OzoneClient, error) {
