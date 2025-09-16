@@ -1,5 +1,10 @@
 # Osprey for ATProto
 
+> [!NOTE]
+> This repo is currently a "working proof of concept", as two things are currently missing: a. a firehose to Kafka producer and b. a clean
+> way to customize the input stream. I will a. add the firehose producer later, and b. determine what the best path forward is for the 
+> input stream.
+
 This repository contains a set of tools that will let you get started with using [Osprey](https://github.com/roostorg/osprey) with ATProto.
 
 ## Getting Started
@@ -60,6 +65,15 @@ cli-osprey-worker() {
     exec uv run python3.11 osprey_worker/src/osprey/worker/cli/sinks.py run-rules-sink --input kafka --output stdout --rules-path ./osprey-atproto/rules_atproto
 }
 ```
+
+## Development
+
+Once you have set up your Osprey repo with this repo as a submodule, you should be able to develop UDFs and rules nicely. For information about
+writing rules, see `rules_atproto/README.md`. For information about writing UDFs, see `plugins_atproto/README.md`.
+
+Additional information on making changes to Osprey can be found [in the Osprey repo](https://github.com/roostorg/osprey/blob/main/docs/DEVELOPMENT.md). For
+more information about writing rules and how they work, see [the README in the Osprey repo](https://github.com/roostorg/osprey/blob/main/docs/rules.md), or
+
 
 ## FAQ
 
