@@ -45,7 +45,7 @@ var (
 type OspreyEnricher struct {
 	logger *slog.Logger
 
-	consumer *consumer.Consumer[]
+	consumer *consumer.Consumer[*osprey.FirehoseEvent]
 	producer *producer.Producer[*osprey.ResultEvent]
 
 	ozoneClient *effector.OzoneClient

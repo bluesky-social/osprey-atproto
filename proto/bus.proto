@@ -1,7 +1,7 @@
 syntax = "proto3";
 
-package bus;
-option go_package = "/;bus";
+package osprey;
+option go_package = "/;osprey";
 
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";

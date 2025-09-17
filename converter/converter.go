@@ -38,25 +38,27 @@ const (
 )
 
 var (
-	eventsReceived = promauto.NewCounterVec(prometheus.CounterOpts{
+	reg = prometheus.NewRegistry()
+
+	eventsReceived = promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name:      "firehose_events_received",
 		Namespace: NAMESPACE,
 		Help:      "number of events received from the firehose, by collection",
 	}, []string{"kind", "status"})
 
-	eventsProduced = promauto.NewCounterVec(prometheus.CounterOpts{
+	eventsProduced = promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name:      "events_produced",
 		Namespace: NAMESPACE,
 		Help:      "number of events produced, by collection and status",
 	}, []string{"kind", "status"})
 
-	ozoneRequests = promauto.NewCounterVec(prometheus.CounterOpts{
+	ozoneRequests = promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name:      "ozone_requests",
 		Namespace: NAMESPACE,
 		Help:      "number of requests to Ozone",
 	}, []string{"type", "kind", "status"})
 
-	plcRequests = promauto.NewCounterVec(prometheus.CounterOpts{
+	plcRequests = promauto.With(reg).NewCounterVec(prometheus.CounterOpts{
 		Name:      "plc_requests",
 		Namespace: NAMESPACE,
 		Help:      "number of requests to PLC",
@@ -250,7 +252,6 @@ func (c *KafkaConverter) handleStreamEvent(ctx context.Context, xe *events.XRPCS
 
 	switch {
 	case xe.RepoCommit != nil:
-		eventsReceived.WithLabelValues("commit").Inc()
 		if xe.RepoCommit.TooBig {
 			// TODO: deprecated right?
 			c.logger.Warn("repo commit too big", "repo", xe.RepoCommit.Repo, "seq", xe.RepoCommit.Seq, "rev", xe.RepoCommit.Rev)
@@ -343,13 +344,8 @@ func (c *KafkaConverter) handleStreamEvent(ctx context.Context, xe *events.XRPCS
 }
 
 func (c *KafkaConverter) handleRepoCommit(ctx context.Context, evt *atproto.SyncSubscribeRepos_Commit) error {
-	status := "error"
 	defer func() {
-		if status == "error" {
-			c.logger.Error("failed to send event to bus, ")
-		} else {
-			c.updateCursor(evt.Seq)
-		}
+		c.updateCursor(evt.Seq)
 	}()
 
 	logger := c.logger.With("repo", evt.Repo, "seq", evt.Seq, "commit", evt.Commit.String())

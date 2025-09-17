@@ -4,7 +4,7 @@
 // 	protoc        (unknown)
 // source: bus.proto
 
-package bus
+package osprey
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
@@ -132,7 +132,7 @@ type FirehoseEvent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Did           string                 `protobuf:"bytes,1,opt,name=did,proto3" json:"did,omitempty"`
 	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
-	Kind          EventKind              `protobuf:"varint,3,opt,name=kind,proto3,enum=bus.EventKind" json:"kind,omitempty"`
+	Kind          EventKind              `protobuf:"varint,3,opt,name=kind,proto3,enum=osprey.EventKind" json:"kind,omitempty"`
 	Commit        *Commit                `protobuf:"bytes,4,opt,name=commit,proto3" json:"commit,omitempty"`
 	Account       []byte                 `protobuf:"bytes,5,opt,name=account,proto3" json:"account,omitempty"`   // comatproto.SyncSubscribeRepos_Account as opaque bytes
 	Identity      []byte                 `protobuf:"bytes,6,opt,name=identity,proto3" json:"identity,omitempty"` // comatproto.SyncSubscribeRepos_Identity as opaque bytes
@@ -215,7 +215,7 @@ func (x *FirehoseEvent) GetIdentity() []byte {
 type Commit struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Rev           string                 `protobuf:"bytes,1,opt,name=rev,proto3" json:"rev,omitempty"`
-	Operation     CommitOperation        `protobuf:"varint,2,opt,name=operation,proto3,enum=bus.CommitOperation" json:"operation,omitempty"`
+	Operation     CommitOperation        `protobuf:"varint,2,opt,name=operation,proto3,enum=osprey.CommitOperation" json:"operation,omitempty"`
 	Collection    string                 `protobuf:"bytes,3,opt,name=collection,proto3" json:"collection,omitempty"`
 	Rkey          string                 `protobuf:"bytes,4,opt,name=rkey,proto3" json:"rkey,omitempty"`
 	Record        []byte                 `protobuf:"bytes,5,opt,name=record,proto3" json:"record,omitempty"` // json.RawMessage as opaque bytes
@@ -352,17 +352,17 @@ var File_bus_proto protoreflect.FileDescriptor
 
 const file_bus_proto_rawDesc = "" +
 	"\n" +
-	"\tbus.proto\x12\x03bus\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf2\x01\n" +
+	"\tbus.proto\x12\x06osprey\x1a\x1bbuf/validate/validate.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xf8\x01\n" +
 	"\rFirehoseEvent\x12\x18\n" +
 	"\x03did\x18\x01 \x01(\tB\x06\xbaH\x03\xc8\x01\x01R\x03did\x12@\n" +
-	"\ttimestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\ttimestamp\x12*\n" +
-	"\x04kind\x18\x03 \x01(\x0e2\x0e.bus.EventKindB\x06\xbaH\x03\xc8\x01\x01R\x04kind\x12#\n" +
-	"\x06commit\x18\x04 \x01(\v2\v.bus.CommitR\x06commit\x12\x18\n" +
+	"\ttimestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampB\x06\xbaH\x03\xc8\x01\x01R\ttimestamp\x12-\n" +
+	"\x04kind\x18\x03 \x01(\x0e2\x11.osprey.EventKindB\x06\xbaH\x03\xc8\x01\x01R\x04kind\x12&\n" +
+	"\x06commit\x18\x04 \x01(\v2\x0e.osprey.CommitR\x06commit\x12\x18\n" +
 	"\aaccount\x18\x05 \x01(\fR\aaccount\x12\x1a\n" +
-	"\bidentity\x18\x06 \x01(\fR\bidentity\"\xac\x01\n" +
+	"\bidentity\x18\x06 \x01(\fR\bidentity\"\xaf\x01\n" +
 	"\x06Commit\x12\x10\n" +
-	"\x03rev\x18\x01 \x01(\tR\x03rev\x122\n" +
-	"\toperation\x18\x02 \x01(\x0e2\x14.bus.CommitOperationR\toperation\x12\x1e\n" +
+	"\x03rev\x18\x01 \x01(\tR\x03rev\x125\n" +
+	"\toperation\x18\x02 \x01(\x0e2\x17.osprey.CommitOperationR\toperation\x12\x1e\n" +
 	"\n" +
 	"collection\x18\x03 \x01(\tR\n" +
 	"collection\x12\x12\n" +
@@ -381,8 +381,9 @@ const file_bus_proto_rawDesc = "" +
 	"\x1cCOMMIT_OPERATION_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17COMMIT_OPERATION_CREATE\x10\x01\x12\x1b\n" +
 	"\x17COMMIT_OPERATION_UPDATE\x10\x02\x12\x1b\n" +
-	"\x17COMMIT_OPERATION_DELETE\x10\x03BF\n" +
-	"\acom.busB\bBusProtoP\x01Z\x05/;bus\xa2\x02\x03BXX\xaa\x02\x03Bus\xca\x02\x03Bus\xe2\x02\x0fBus\\GPBMetadata\xea\x02\x03Busb\x06proto3"
+	"\x17COMMIT_OPERATION_DELETE\x10\x03BX\n" +
+	"\n" +
+	"com.ospreyB\bBusProtoP\x01Z\b/;osprey\xa2\x02\x03OXX\xaa\x02\x06Osprey\xca\x02\x06Osprey\xe2\x02\x12Osprey\\GPBMetadata\xea\x02\x06Ospreyb\x06proto3"
 
 var (
 	file_bus_proto_rawDescOnce sync.Once
@@ -399,18 +400,18 @@ func file_bus_proto_rawDescGZIP() []byte {
 var file_bus_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_bus_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_bus_proto_goTypes = []any{
-	(EventKind)(0),                // 0: bus.EventKind
-	(CommitOperation)(0),          // 1: bus.CommitOperation
-	(*FirehoseEvent)(nil),         // 2: bus.FirehoseEvent
-	(*Commit)(nil),                // 3: bus.Commit
-	(*Cursor)(nil),                // 4: bus.Cursor
+	(EventKind)(0),                // 0: osprey.EventKind
+	(CommitOperation)(0),          // 1: osprey.CommitOperation
+	(*FirehoseEvent)(nil),         // 2: osprey.FirehoseEvent
+	(*Commit)(nil),                // 3: osprey.Commit
+	(*Cursor)(nil),                // 4: osprey.Cursor
 	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
 }
 var file_bus_proto_depIdxs = []int32{
-	5, // 0: bus.FirehoseEvent.timestamp:type_name -> google.protobuf.Timestamp
-	0, // 1: bus.FirehoseEvent.kind:type_name -> bus.EventKind
-	3, // 2: bus.FirehoseEvent.commit:type_name -> bus.Commit
-	1, // 3: bus.Commit.operation:type_name -> bus.CommitOperation
+	5, // 0: osprey.FirehoseEvent.timestamp:type_name -> google.protobuf.Timestamp
+	0, // 1: osprey.FirehoseEvent.kind:type_name -> osprey.EventKind
+	3, // 2: osprey.FirehoseEvent.commit:type_name -> osprey.Commit
+	1, // 3: osprey.Commit.operation:type_name -> osprey.CommitOperation
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

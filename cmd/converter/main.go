@@ -8,6 +8,7 @@ import (
 
 	"github.com/bluesky-social/go-util/pkg/telemetry"
 	"github.com/bluesky-social/osprey-atproto/converter"
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/urfave/cli/v2"
 )
 
@@ -16,6 +17,8 @@ func main() {
 		Name:  "converter",
 		Usage: "a smol guy for converting the atproto firehose to kafka",
 		Flags: []cli.Flag{
+			telemetry.CLIFlagDebug,
+			telemetry.CLIFlagMetricsListenAddress,
 			&cli.StringFlag{
 				Name:    "relay-host",
 				Usage:   "full websockt url to the relay firehose endpoint",
