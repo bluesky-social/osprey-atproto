@@ -7,6 +7,10 @@
 
 This repository contains a set of tools that will let you get started with using [Osprey](https://github.com/roostorg/osprey) with ATProto.
 
+## Architecture
+
+![osprey-atproto.png](docs/Osprey-ATProto.png)
+
 ## Getting Started
 
 This repository contains the following:
