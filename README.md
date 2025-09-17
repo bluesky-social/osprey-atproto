@@ -9,7 +9,10 @@ This repository contains a set of tools that will let you get started with using
 
 ## Architecture
 
-![osprey-atproto.png](docs/Osprey-ATProto.png)
+<details>
+   <summary>Osprey ATProto Architecture Overview</summary>
+   <img src="docs/Osprey-ATProto.png" />
+</details>
 
 ## Getting Started
 
