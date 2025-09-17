@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package bus;
+option go_package = "/;bus";
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+message FirehoseEvent {
+  string did = 1 [
+    (buf.validate.field).required = true
+  ];
+
+  google.protobuf.Timestamp timestamp = 2 [
+    (buf.validate.field).required = true
+  ];
+  
+  EventKind kind = 3 [
+    (buf.validate.field).required = true
+  ];
+
+  Commit commit = 4;
+  bytes account = 5;   // comatproto.SyncSubscribeRepos_Account as opaque bytes
+  bytes identity = 6;  // comatproto.SyncSubscribeRepos_Identity as opaque bytes
+}
+
+message Commit {
+  string rev = 1;
+  CommitOperation operation = 2;
+  string collection = 3;
+  string rkey = 4;
+  bytes record = 5;  // json.RawMessage as opaque bytes
+  string cid = 6;
+}
+
+// Enums for the constants (optional, but recommended for type safety)
+enum EventKind {
+  EVENT_KIND_UNSPECIFIED = 0;
+  EVENT_KIND_COMMIT = 1;
+  EVENT_KIND_ACCOUNT = 2;
+  EVENT_KIND_IDENTITY = 3;
+}
+
+enum CommitOperation {
+  COMMIT_OPERATION_UNSPECIFIED = 0;
+  COMMIT_OPERATION_CREATE = 1;
+  COMMIT_OPERATION_UPDATE = 2;
+  COMMIT_OPERATION_DELETE = 3;
+}
+
+message Cursor {
+  int64 sequence = 1;
+  bool saved_on_exit = 2;
+}
