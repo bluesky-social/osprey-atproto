@@ -3,7 +3,6 @@ import json
 import platform
 from typing import Dict, Iterator
 
-import sentry_sdk
 from kafka.consumer.fetcher import ConsumerRecord
 from osprey.engine.executor.execution_context import Action
 from osprey.worker.lib.config import Config
@@ -15,7 +14,6 @@ from osprey.worker.sinks.utils.acking_contexts import (
     NoopAckingContext,
 )
 from osprey.worker.sinks.utils.kafka import PatchedKafkaConsumer
-from output_sinks.kafka_output_sink import DEFAULT_KAFKA_OUTPUT_SINK_CLIENT_ID
 from rpc.osprey_atproto_pb2 import OspreyInputEvent
 from shared.metrics import worker_metrics
 
@@ -42,7 +40,7 @@ class KafkaInputStream(BaseInputStream[BaseAckingContext[Action]]):
             if client_hostname != '':
                 client_id = f'{client_hostname};host_override={input_bootstrap_servers[0]}'
             else:
-                client_id = f'{DEFAULT_KAFKA_OUTPUT_SINK_CLIENT_ID};host_override={input_bootstrap_servers[0]}'
+                client_id = f'{DEFAULT_KAFKA_INPUT_SINK_CLIENT_ID};host_override={input_bootstrap_servers[0]}'
 
         logger.info(f'Creating Kafka consumer with client id {client_id}')
 
@@ -64,9 +62,7 @@ class KafkaInputStream(BaseInputStream[BaseAckingContext[Action]]):
     def _gen(self) -> Iterator[BaseAckingContext[Action]]:
         while True:
             try:
-                with metrics.timed('kafka_consumer.lock_time'):
-                    with metrics.timed('kafka_consumer.poll_time'):
-                        record: ConsumerRecord = next(self._consumer)
+                record: ConsumerRecord = next(self._consumer)
 
                 worker_metrics.events_received.inc()
 
@@ -126,6 +122,5 @@ class KafkaInputStream(BaseInputStream[BaseAckingContext[Action]]):
                 yield NoopAckingContext(action)
             except Exception as e:
                 logger.exception(f'Error while consuming from Kafka: {e}')
-                sentry_sdk.capture_exception(e)
                 worker_metrics.events_processed.labels(status='error', action_type='unk').inc()
                 continue
