@@ -29,7 +29,7 @@ WhenRules(
   then=[
     AddAtprotoTag(
       entity=Did,
-      label='possible-domain-spam',
+      tag='domain-spam',
       comment='A new account has posted links five times in five minutes',
     ),
   ],

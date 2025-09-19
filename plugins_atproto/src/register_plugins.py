@@ -1,10 +1,16 @@
 from typing import Sequence
 
+from input_streams.kafka_input_stream import KafkaInputStream
+from osprey.engine.executor.execution_context import Action
 from osprey.worker.adaptor.plugin_manager import hookimpl_osprey
 from osprey.worker.lib.config import Config
 from osprey.worker.lib.osprey_shared.logging import DynamicLogSampler
+from osprey.worker.lib.singletons import CONFIG
+from osprey.worker.sinks.sink.input_stream import BaseInputStream
 from osprey.worker.sinks.sink.output_sink import BaseOutputSink, StdoutOutputSink
+from osprey.worker.sinks.utils.acking_contexts import BaseAckingContext
 from output_sinks.kafka_output_sink import KafkaOutputSink
+from shared.metrics import worker_metrics
 from udfs.atproto.atproto import (
     GetDIDCreatedAt,
     GetHandle,
@@ -92,6 +98,16 @@ def register_udfs():
         AddAtprotoTakedown,
         RemoveAtprotoTakedown,
     ]
+
+
+@hookimpl_osprey
+def register_input_stream() -> BaseInputStream[BaseAckingContext[Action]]:
+    config = CONFIG.instance()
+    worker_metrics.start_http(
+        port=config.get_int('OSPREY_PROM_METRICS_PORT', 9090),
+        addr=config.get_str('OSPREY_PROM_METRICS_ADDR', '127.0.0.1'),
+    )
+    return KafkaInputStream(config=config)
 
 
 @hookimpl_osprey

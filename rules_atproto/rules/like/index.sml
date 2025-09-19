@@ -5,5 +5,3 @@ Import(
     'models/like.sml'
   ],
 )
-
-Require(rule='rules/like/possible_rasko_like.sml')

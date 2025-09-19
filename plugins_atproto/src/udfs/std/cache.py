@@ -6,8 +6,8 @@ from osprey.engine.executor.execution_context import ExecutionContext
 from osprey.engine.udf.arguments import ArgumentsBase
 from osprey.engine.udf.base import UDFBase
 from osprey.worker.lib.config import Config
-from osprey.worker.lib.osprey_shared.metrics import worker_metrics
 from pymemcache import HashClient
+from shared.metrics import worker_metrics
 
 logger = get_logger('cache_client')
 
