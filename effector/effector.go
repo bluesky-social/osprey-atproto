@@ -292,7 +292,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				ctx,
 				evt.Did,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.Label,
 				e.Comment,
@@ -331,7 +332,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				evt.Uri,
 				evt.Cid,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.Label,
 				e.Comment,
@@ -385,7 +387,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				ctx,
 				evt.Did,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.Tag,
 				e.Comment,
@@ -422,7 +425,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				evt.Uri,
 				evt.Cid,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.Tag,
 				e.Comment,
@@ -470,7 +474,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				ctx,
 				evt.Did,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.Comment,
 				e.Email,
@@ -501,7 +506,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				evt.Uri,
 				evt.Cid,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.Comment,
 				e.Email,
@@ -540,7 +546,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				ctx,
 				evt.Did,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.ReportKind,
 				e.Comment,
@@ -565,7 +572,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				evt.Uri,
 				evt.Cid,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.ReportKind,
 				e.Comment,
@@ -609,7 +617,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				ctx,
 				evt.Did,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.Comment,
 			); err != nil {
@@ -638,7 +647,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				evt.Uri,
 				evt.Cid,
 				ModToolMeta{
-					Rules: rules,
+					Rules:    rules,
+					ActionID: evt.ActionId,
 				},
 				e.Comment,
 			); err != nil {
@@ -676,7 +686,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				ctx,
 				evt.Did,
 				ModToolMeta{
-					Rules: strings.Join(e.Rules, ","),
+					Rules:    strings.Join(e.Rules, ","),
+					ActionID: evt.ActionId,
 				},
 				e.Comment,
 			); err != nil {
@@ -699,7 +710,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				evt.Uri,
 				evt.Cid,
 				ModToolMeta{
-					Rules: strings.Join(e.Rules, ","),
+					Rules:    strings.Join(e.Rules, ","),
+					ActionID: evt.ActionId,
 				},
 				e.Comment,
 			); err != nil {
@@ -737,7 +749,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				ctx,
 				evt.Did,
 				ModToolMeta{
-					Rules: strings.Join(e.Rules, ","),
+					Rules:    strings.Join(e.Rules, ","),
+					ActionID: evt.ActionId,
 				},
 				e.Comment,
 			); err != nil {
@@ -760,7 +773,8 @@ func (or *OspreyEffector) handleEvent(ctx context.Context, evt *osprey.ResultEve
 				evt.Uri,
 				evt.Cid,
 				ModToolMeta{
-					Rules: strings.Join(e.Rules, ","),
+					Rules:    strings.Join(e.Rules, ","),
+					ActionID: evt.ActionId,
 				},
 				e.Comment,
 			); err != nil {

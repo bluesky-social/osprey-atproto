@@ -1,6 +1,18 @@
 # Osprey for ATProto
 
+> [!NOTE]
+> This repo is currently a "working proof of concept", as two things are currently missing: a. a firehose to Kafka producer and b. a clean
+> way to customize the input stream. I will a. add the firehose producer later, and b. determine what the best path forward is for the 
+> input stream.
+
 This repository contains a set of tools that will let you get started with using [Osprey](https://github.com/roostorg/osprey) with ATProto.
+
+## Architecture
+
+<details>
+   <summary>Osprey ATProto Architecture Overview</summary>
+   <img src="docs/Osprey-ATProto.png" />
+</details>
 
 ## Getting Started
 
@@ -61,14 +73,23 @@ cli-osprey-worker() {
 }
 ```
 
+## Development
+
+Once you have set up your Osprey repo with this repo as a submodule, you should be able to develop UDFs and rules nicely. For information about
+writing rules, see `rules_atproto/README.md`. For information about writing UDFs, see `plugins_atproto/README.md`.
+
+Additional information on making changes to Osprey can be found [in the Osprey repo](https://github.com/roostorg/osprey/blob/main/docs/DEVELOPMENT.md). For
+more information about writing rules and how they work, see [the README in the Osprey repo](https://github.com/roostorg/osprey/blob/main/docs/rules.md), or
+
+
 ## FAQ
 
 As we field more questsion from the community, we will update this FAQ section. For now, here are the things we expect people to ask the most.
 
 ### What is Osprey?
 
-Osprey is [Discord's](https://discord.com/) open-source event stream decisions engine and analysis UI designed to investigate and take automatic
-action on events and their properties as they happen in real-time. Originally developed internally at Discord to combat spam, abuse, botting,
+[Osprey](https://github.com/roostorg/osprey) is [ROOST's](https://roost.tools/) open-source event stream decisions engine and analysis UI designed to investigate and take automatic
+action on events and their properties as they happen in real-time. Originally developed internally at [Discord](https://discord.com/) to combat spam, abuse, botting,
 and scripting across our platform, Osprey has now been open-sourced to help other platforms facing similar challenges.
 
 Osprey is a library for processing actions through human written rules and outputting labels, webhooks back to an API and other sinks. It
