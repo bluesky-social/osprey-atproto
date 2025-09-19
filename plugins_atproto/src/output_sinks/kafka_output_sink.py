@@ -6,8 +6,8 @@ from typing import Any, List, Optional
 from confluent_kafka import KafkaError, Producer
 from confluent_kafka.admin import AdminClient, NewTopic
 from google.protobuf.timestamp_pb2 import Timestamp
+from osprey.worker.lib.osprey_engine import ExecutionResult
 from osprey.worker.lib.osprey_shared.logging import get_logger
-from osprey.worker.lib.osprey_shared.metrics import worker_metrics
 from osprey.worker.sinks.sink.output_sink import BaseOutputSink, DynamicLogSampler
 from rpc.osprey_atproto_pb2 import (
     AtprotoAcknowledgeEffect as OutputAcknowledgeEffect,
@@ -36,6 +36,7 @@ from rpc.osprey_atproto_pb2 import (
 from rpc.osprey_atproto_pb2 import (
     ResultEvent,
 )
+from shared.metrics import worker_metrics
 from udfs.atproto.atproto import GetRecordCIDFromData, GetRecordURIFromData
 from udfs.atproto.atproto_acknowledge import AtprotoAcknowledgeEffect
 from udfs.atproto.atproto_comment import AtprotoCommentEffect

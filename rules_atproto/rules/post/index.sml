@@ -13,7 +13,4 @@ Require(
   require_if=IsReply and not IsSelfThread and PostsCount <= 10,
 )
 
-Require(
-  rule='rules/post/post_domain_spam.sml',
-  require_if=HighRiskYoungAcctScreen,
-)
+Require(rule='rules/post/post_domain_spam.sml')
