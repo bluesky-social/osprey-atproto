@@ -88,8 +88,8 @@ As we field more questsion from the community, we will update this FAQ section. 
 
 ### What is Osprey?
 
-Osprey is [Discord's](https://discord.com/) open-source event stream decisions engine and analysis UI designed to investigate and take automatic
-action on events and their properties as they happen in real-time. Originally developed internally at Discord to combat spam, abuse, botting,
+[Osprey](https://github.com/roostorg/osprey) is [ROOST's](https://roost.tools/) open-source event stream decisions engine and analysis UI designed to investigate and take automatic
+action on events and their properties as they happen in real-time. Originally developed internally at [Discord](https://discord.com/) to combat spam, abuse, botting,
 and scripting across our platform, Osprey has now been open-sourced to help other platforms facing similar challenges.
 
 Osprey is a library for processing actions through human written rules and outputting labels, webhooks back to an API and other sinks. It
