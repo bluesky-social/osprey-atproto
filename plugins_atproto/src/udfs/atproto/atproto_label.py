@@ -26,6 +26,7 @@ from rpc.osprey_atproto_pb2 import (
     ATPROTO_EMAIL_THREAT_POST_TAKEDOWN,
     ATPROTO_EMAIL_TOXIC_LIST_HIDE,
     ATPROTO_LABEL_HIDE,
+    ATPROTO_LABEL_MISLEADING,
     ATPROTO_LABEL_NEEDS_REVIEW,
     ATPROTO_LABEL_PORN,
     ATPROTO_LABEL_RUDE,
@@ -78,6 +79,8 @@ def StringToAtprotoLabel(label_str: str):
         label = ATPROTO_LABEL_RUDE
     elif label_str == 'spam':
         label = ATPROTO_LABEL_SPAM
+    elif label_str == 'misleading':
+        label = ATPROTO_LABEL_MISLEADING
     else:
         raise StringToAtprotoLabelException()
 
