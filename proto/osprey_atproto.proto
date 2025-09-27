@@ -119,6 +119,7 @@ enum AtprotoLabel {
   ATPROTO_LABEL_WARN = 5;
   ATPROTO_LABEL_HIDE = 6;
   ATPROTO_LABEL_NEEDS_REVIEW = 7;
+  ATPROTO_LABEL_MISLEADING = 8;
 }
 
 enum AtprotoEffectKind {

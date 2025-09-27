@@ -39,7 +39,7 @@ class StringArgumentsBase(ArgumentsBase):
 
 
 class TextContainsArguments(ArgumentsBase):
-    text: str
+    s: str
     phrase: str
     case_sensitive = False
 
@@ -53,7 +53,7 @@ class TextContains(UDFBase[TextContainsArguments, bool]):
         flags = 0 if arguments.case_sensitive else re.IGNORECASE
         regex = re.compile(pattern, flags)
 
-        return bool(regex.search(arguments.text))
+        return bool(regex.search(arguments.s))
 
 
 class ForceStringArguments(ArgumentsBase):
