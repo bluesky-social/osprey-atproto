@@ -15,7 +15,6 @@ import (
 
 	"github.com/bluesky-social/go-util/pkg/bus/consumer"
 	"github.com/bluesky-social/go-util/pkg/bus/producer"
-	"github.com/bluesky-social/go-util/pkg/telemetry"
 	"github.com/bluesky-social/osprey-atproto/enricher/abyss"
 	"github.com/bluesky-social/osprey-atproto/enricher/appview"
 	"github.com/bluesky-social/osprey-atproto/enricher/did"
@@ -24,13 +23,13 @@ import (
 	"github.com/bluesky-social/osprey-atproto/enricher/prescreen"
 	"github.com/bluesky-social/osprey-atproto/enricher/retina"
 	osprey "github.com/bluesky-social/osprey-atproto/proto/go"
-	cli "github.com/urfave/cli/v2"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Enricher struct {
 	logger          *slog.Logger
 	producer        *producer.Producer[*osprey.OspreyInputEvent]
+	consumer        *consumer.Consumer[*osprey.FirehoseEvent]
 	abyssClient     *abyss.Client
 	hiveClient      *hive.Client
 	retinaClient    *retina.Client
@@ -40,276 +39,171 @@ type Enricher struct {
 	didClient       *did.Client
 }
 
-var enricherCmd = &cli.Command{
-	Name: "enricher",
-	Flags: []cli.Flag{
-		&cli.StringSliceFlag{
-			Name:     "bootstrap-servers",
-			Usage:    "Kafka bootstrap servers",
-			Required: true,
-			EnvVars:  []string{"KAFKA_BOOTSTRAP_SERVERS"},
-		},
-		&cli.StringFlag{
-			Name:    "input-topic",
-			Usage:   "Kafka topic to consume from",
-			Value:   "records_and_images",
-			EnvVars: []string{"INPUT_KAFKA_TOPIC"},
-		},
-		&cli.StringFlag{
-			Name:    "output-topic",
-			Usage:   "Kafka topic to produce to",
-			Value:   "enriched_records",
-			EnvVars: []string{"OUTPUT_KAFKA_TOPIC"},
-		},
-		&cli.StringFlag{
-			Name:    "sasl-username",
-			Usage:   "SASL username for Kafka authentication",
-			EnvVars: []string{"SASL_USERNAME"},
-		},
-		&cli.StringFlag{
-			Name:    "sasl-password",
-			Usage:   "SASL password for Kafka authentication",
-			EnvVars: []string{"SASL_PASSWORD"},
-		},
-		&cli.StringFlag{
-			Name:    "secure-output-topic",
-			Usage:   "Kafka topic to produce to on the Secure Cluster",
-			Value:   "moderation_enriched_records",
-			EnvVars: []string{"SECURE_OUTPUT_KAFKA_TOPIC"},
-		},
-		&cli.StringFlag{
-			Name:    "abyss-url",
-			Usage:   "URL for the Abyss service including scheme",
-			EnvVars: []string{"ABYSS_URL"},
-		},
-		&cli.StringFlag{
-			Name:    "abyss-admin-password",
-			Usage:   "Admin password for the Abyss service",
-			EnvVars: []string{"ABYSS_ADMIN_PASSWORD"},
-		},
-		&cli.StringFlag{
-			Name:    "hive-api-token",
-			Usage:   "API token for the Hive service",
-			EnvVars: []string{"HIVE_API_TOKEN"},
-		},
-		&cli.StringFlag{
-			Name:    "retina-url",
-			Usage:   "URL for the Retina service including scheme",
-			EnvVars: []string{"RETINA_URL"},
-		},
-		&cli.StringFlag{
-			Name:    "retina-api-key",
-			Usage:   "API key for the Retina service",
-			EnvVars: []string{"RETINA_API_KEY"},
-		},
-		&cli.StringFlag{
-			Name:    "prescreen-host",
-			Usage:   "Host for the prescreen service",
-			EnvVars: []string{"PRESCREEN_HOST"},
-		},
-		&cli.StringFlag{
-			Name:    "ozone-host",
-			Usage:   "Host for the Ozone service",
-			EnvVars: []string{"OZONE_HOST"},
-		},
-		&cli.StringFlag{
-			Name:    "ozone-admin-token",
-			Usage:   "Admin token for the Ozone service",
-			EnvVars: []string{"OZONE_ADMIN_TOKEN"},
-		},
-		&cli.StringFlag{
-			Name:    "appview-host",
-			Usage:   "Host for the Appview service",
-			EnvVars: []string{"APPVIEW_HOST"},
-		},
-		&cli.StringFlag{
-			Name:    "appview-ratelimit-bypass",
-			Usage:   "Rate limit bypass token for the Appview service",
-			EnvVars: []string{"APPVIEW_RATELIMIT_BYPASS"},
-		},
-		&cli.StringFlag{
-			Name:    "plc-host",
-			Usage:   "plc host for DID:PLC doc lookups",
-			EnvVars: []string{"PLC_HOST"},
-		},
-	},
-	Action: func(cctx *cli.Context) error {
-		ctx := cctx.Context
-		// Flags
-		opt := struct {
-			KafkaBootstrapServers  []string
-			SASLUsername           string
-			SASLPassword           string
-			InputTopic             string
-			OutputTopic            string
-			SecureOutputTopic      string
-			AbyssURL               string
-			AbyssAdminPassword     string
-			HiveAPIToken           string
-			RetinaURL              string
-			RetinaAPIKey           string
-			PrescreenHost          string
-			OzoneHost              string
-			OzoneAdminToken        string
-			AppviewHost            string
-			AppviewRatelimitBypass string
-			PLCHost                string
-		}{
-			KafkaBootstrapServers:  cctx.StringSlice("kafka-bootstrap-servers"),
-			SASLUsername:           cctx.String("sasl-username"),
-			SASLPassword:           cctx.String("sasl-password"),
-			InputTopic:             cctx.String("input-topic"),
-			OutputTopic:            cctx.String("output-topic"),
-			SecureOutputTopic:      cctx.String("secure-output-topic"),
-			AbyssURL:               cctx.String("abyss-url"),
-			AbyssAdminPassword:     cctx.String("abyss-admin-password"),
-			HiveAPIToken:           cctx.String("hive-api-token"),
-			RetinaURL:              cctx.String("retina-url"),
-			RetinaAPIKey:           cctx.String("retina-api-key"),
-			PrescreenHost:          cctx.String("prescreen-host"),
-			OzoneHost:              cctx.String("ozone-host"),
-			OzoneAdminToken:        cctx.String("ozone-admin-token"),
-			AppviewHost:            cctx.String("appview-host"),
-			AppviewRatelimitBypass: cctx.String("appview-ratelimit-bypass"),
-			PLCHost:                cctx.String("plc-host"),
-		}
+type Args struct {
+	KafkaBootstrapServers  []string
+	SASLUsername           string
+	SASLPassword           string
+	InputTopic             string
+	OutputTopic            string
+	SecureOutputTopic      string
+	AbyssURL               string
+	AbyssAdminPassword     string
+	HiveAPIToken           string
+	RetinaURL              string
+	RetinaAPIKey           string
+	PrescreenHost          string
+	OzoneHost              string
+	OzoneAdminToken        string
+	AppviewHost            string
+	AppviewRatelimitBypass string
+	PLCHost                string
+	Logger                 *slog.Logger
+}
 
-		logger := telemetry.StartLogger(cctx)
-		telemetry.StartMetrics(cctx)
+func New(ctx context.Context, args *Args) (*Enricher, error) {
+	if args.Logger == nil {
+		args.Logger = slog.Default()
+	}
+	logger := args.Logger
 
-		en := Enricher{
-			logger: logger,
-		}
+	en := Enricher{
+		logger: args.Logger,
+	}
 
-		if opt.AbyssURL != "" {
-			abyssClient := abyss.NewClient(opt.AbyssURL, opt.AbyssAdminPassword)
-			en.abyssClient = abyssClient
-			logger.Info("initialized Abyss client", "url", opt.AbyssURL)
-		}
-		if opt.HiveAPIToken != "" {
-			hiveClient := hive.NewClient(opt.HiveAPIToken)
-			en.hiveClient = hiveClient
-			logger.Info("initialized Hive client")
-		}
-		if opt.RetinaURL != "" && opt.RetinaAPIKey != "" {
-			retinaClient := retina.NewRetinaClient(opt.RetinaURL, opt.RetinaAPIKey)
-			en.retinaClient = retinaClient
-			logger.Info("initialized Retina client", "url", opt.RetinaURL)
-		}
-		if opt.PrescreenHost != "" {
-			prescreenClient := prescreen.NewClient(opt.PrescreenHost)
-			en.prescreenClient = prescreenClient
-			logger.Info("initialized Prescreen client", "host", opt.PrescreenHost)
-		}
-		if opt.OzoneHost != "" && opt.OzoneAdminToken != "" {
-			cacheSize := 50_000
-			cacheTTL := time.Minute * 1
-			ozoneClient := ozone.NewClient(opt.OzoneHost, opt.OzoneAdminToken, cacheSize, cacheTTL)
-			en.ozoneClient = ozoneClient
-			logger.Info("initialized Ozone client", "host", opt.OzoneHost)
-		}
-		if opt.AppviewHost != "" {
-			cacheSize := 0
-			cacheTTL := time.Duration(0)
-			appviewClient := appview.NewClient(opt.AppviewHost, opt.AppviewRatelimitBypass, cacheSize, cacheTTL)
-			en.appviewClient = appviewClient
-			logger.Info("initialized Appview client", "host", opt.AppviewHost)
-		}
-		if opt.PLCHost != "" {
-			docCacheSize := 50_000
-			docCacheTTL := time.Minute * 1
-			auditCacheSize := 100_000
-			auditCacheTTL := time.Hour * 1
-			didClient := did.NewClient(opt.PLCHost, docCacheSize, docCacheTTL, auditCacheSize, auditCacheTTL)
-			en.didClient = didClient
-			logger.Info("initialized DID client", "host", opt.PLCHost)
-		}
+	if args.AbyssURL != "" {
+		abyssClient := abyss.NewClient(args.AbyssURL, args.AbyssAdminPassword)
+		en.abyssClient = abyssClient
+		logger.Info("initialized Abyss client", "url", args.AbyssURL)
+	}
+	if args.HiveAPIToken != "" {
+		hiveClient := hive.NewClient(args.HiveAPIToken)
+		en.hiveClient = hiveClient
+		logger.Info("initialized Hive client")
+	}
+	if args.RetinaURL != "" && args.RetinaAPIKey != "" {
+		retinaClient := retina.NewRetinaClient(args.RetinaURL, args.RetinaAPIKey)
+		en.retinaClient = retinaClient
+		logger.Info("initialized Retina client", "url", args.RetinaURL)
+	}
+	if args.PrescreenHost != "" {
+		prescreenClient := prescreen.NewClient(args.PrescreenHost)
+		en.prescreenClient = prescreenClient
+		logger.Info("initialized Prescreen client", "host", args.PrescreenHost)
+	}
+	if args.OzoneHost != "" && args.OzoneAdminToken != "" {
+		cacheSize := 50_000
+		cacheTTL := time.Minute * 1
+		ozoneClient := ozone.NewClient(args.OzoneHost, args.OzoneAdminToken, cacheSize, cacheTTL)
+		en.ozoneClient = ozoneClient
+		logger.Info("initialized Ozone client", "host", args.OzoneHost)
+	}
+	if args.AppviewHost != "" {
+		cacheSize := 0
+		cacheTTL := time.Duration(0)
+		appviewClient := appview.NewClient(args.AppviewHost, args.AppviewRatelimitBypass, cacheSize, cacheTTL)
+		en.appviewClient = appviewClient
+		logger.Info("initialized Appview client", "host", args.AppviewHost)
+	}
+	if args.PLCHost != "" {
+		docCacheSize := 50_000
+		docCacheTTL := time.Minute * 1
+		auditCacheSize := 100_000
+		auditCacheTTL := time.Hour * 1
+		didClient := did.NewClient(args.PLCHost, docCacheSize, docCacheTTL, auditCacheSize, auditCacheTTL)
+		en.didClient = didClient
+		logger.Info("initialized DID client", "host", args.PLCHost)
+	}
 
-		secureProducer, err := producer.New(ctx, logger, opt.KafkaBootstrapServers, opt.SecureOutputTopic,
-			producer.WithCredentials[*osprey.OspreyInputEvent](opt.SASLUsername, opt.SASLPassword),
-			producer.WithEnsureTopic[*osprey.OspreyInputEvent](true),
-			producer.WithTopicPartitions[*osprey.OspreyInputEvent](100),
-			producer.WithMaxMessageBytes[*osprey.OspreyInputEvent](5<<20), // 5 MiB
-		)
-		if err != nil {
-			return errors.Join(err, errors.New("failed to create secure Kafka producer"))
-		}
-		defer secureProducer.Close()
-		en.producer = secureProducer
+	secureProducer, err := producer.New(ctx, logger, args.KafkaBootstrapServers, args.SecureOutputTopic,
+		producer.WithCredentials[*osprey.OspreyInputEvent](args.SASLUsername, args.SASLPassword),
+		producer.WithEnsureTopic[*osprey.OspreyInputEvent](true),
+		producer.WithTopicPartitions[*osprey.OspreyInputEvent](100),
+		producer.WithMaxMessageBytes[*osprey.OspreyInputEvent](5<<20), // 5 MiB
+	)
+	if err != nil {
+		return nil, errors.Join(err, errors.New("failed to create secure Kafka producer"))
+	}
+	en.producer = secureProducer
 
-		busConsumer, err := consumer.New(logger, opt.KafkaBootstrapServers, opt.InputTopic, "enricher-consumers",
-			consumer.WithOffset[*osprey.FirehoseEvent](consumer.OffsetEnd),
-			consumer.WithMessageHandler(en.handleEvent),
-			consumer.WithDeadLetterQueue[*osprey.FirehoseEvent](),
-		)
-		if err != nil {
-			return fmt.Errorf("failed to create Bus consumer: %w", err)
-		}
-		defer busConsumer.Close()
+	busConsumer, err := consumer.New(logger, args.KafkaBootstrapServers, args.InputTopic, "enricher-consumers",
+		consumer.WithOffset[*osprey.FirehoseEvent](consumer.OffsetEnd),
+		consumer.WithMessageHandler(en.handleEvent),
+		consumer.WithDeadLetterQueue[*osprey.FirehoseEvent](),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create Bus consumer: %w", err)
+	}
+	en.consumer = busConsumer
 
-		logger.Info("initialized enricher Bus consumer and producer",
-			"bootstrap_serers", opt.KafkaBootstrapServers,
-			"input-topic", opt.InputTopic,
-			"output-topic", opt.OutputTopic,
-			"secure-output-topic", opt.SecureOutputTopic,
-		)
+	logger.Info("initialized enricher Bus consumer and producer",
+		"bootstrap_serers", args.KafkaBootstrapServers,
+		"input-topic", args.InputTopic,
+		"output-topic", args.OutputTopic,
+		"secure-output-topic", args.SecureOutputTopic,
+	)
 
-		shutdownConsumer := make(chan struct{})
-		consumerShutdown := make(chan struct{})
+	return &en, nil
+}
+
+func (en *Enricher) Run(ctx context.Context) error {
+	defer en.producer.Close()
+	defer en.consumer.Close()
+
+	shutdownConsumer := make(chan struct{})
+	consumerShutdown := make(chan struct{})
+	go func() {
+		ctx := context.Background()
+		ctx, cancel := context.WithCancel(ctx)
 		go func() {
-			ctx := context.Background()
-			ctx, cancel := context.WithCancel(ctx)
-			go func() {
-				for {
-					err := busConsumer.Consume(ctx)
-					if err != nil {
-						if errors.Is(err, consumer.ErrClientClosed) {
-							logger.Info("consumer client closed, stopping")
-							break
-						}
-						logger.Error("failed to consume messages", "err", err)
+			for {
+				err := en.consumer.Consume(ctx)
+				if err != nil {
+					if errors.Is(err, consumer.ErrClientClosed) {
+						en.logger.Info("consumer client closed, stopping")
+						break
 					}
+					en.logger.Error("failed to consume messages", "err", err)
 				}
-				close(consumerShutdown)
-			}()
-			<-shutdownConsumer
-			busConsumer.Close()
-			cancel()
-		}()
-
-		// Handle exit signals.
-		logger.Debug("registering OS exit signal handler")
-		quit := make(chan struct{})
-		exitSignals := make(chan os.Signal, 1)
-		signal.Notify(exitSignals, syscall.SIGINT, syscall.SIGTERM)
-		go func() {
-			// Trigger the return that causes an exit when we return from this goroutine.
-			defer close(quit)
-
-			select {
-			case sig := <-exitSignals:
-				logger.Info("received OS exit signal", "signal", sig)
-			case <-ctx.Done():
-				logger.Info("shutting down on context done")
 			}
-
-			// Wait up to 5 seconds for the Consumer to finish processing.
-			close(shutdownConsumer)
-			select {
-			case <-consumerShutdown:
-				logger.Info("Consumer finished processing")
-			case <-time.After(5 * time.Second):
-				logger.Warn("Consumer did not finish processing in time, forcing shutdown")
-			}
-
-			// Flush the producer to ensure all messages are sent.
-			en.producer.Close()
+			close(consumerShutdown)
 		}()
+		<-shutdownConsumer
+		en.consumer.Close()
+		cancel()
+	}()
 
-		<-quit
-		logger.Info("graceful shutdown complete")
-		return nil
-	},
+	// Handle exit signals.
+	en.logger.Debug("registering OS exit signal handler")
+	quit := make(chan struct{})
+	exitSignals := make(chan os.Signal, 1)
+	signal.Notify(exitSignals, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		// Trigger the return that causes an exit when we return from this goroutine.
+		defer close(quit)
+
+		select {
+		case sig := <-exitSignals:
+			en.logger.Info("received OS exit signal", "signal", sig)
+		case <-ctx.Done():
+			en.logger.Info("shutting down on context done")
+		}
+
+		// Wait up to 5 seconds for the Consumer to finish processing.
+		close(shutdownConsumer)
+		select {
+		case <-consumerShutdown:
+			en.logger.Info("Consumer finished processing")
+		case <-time.After(5 * time.Second):
+			en.logger.Warn("Consumer did not finish processing in time, forcing shutdown")
+		}
+
+		// Flush the producer to ensure all messages are sent.
+		en.producer.Close()
+	}()
+
+	<-quit
+	en.logger.Info("graceful shutdown complete")
+	return nil
 }
 
 type GenericResult struct {
