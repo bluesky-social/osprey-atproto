@@ -45,7 +45,6 @@ type Args struct {
 	SASLPassword           string
 	InputTopic             string
 	OutputTopic            string
-	SecureOutputTopic      string
 	AbyssURL               string
 	AbyssAdminPassword     string
 	HiveAPIToken           string
@@ -114,7 +113,7 @@ func New(ctx context.Context, args *Args) (*Enricher, error) {
 		logger.Info("initialized DID client", "host", args.PLCHost)
 	}
 
-	secureProducer, err := producer.New(ctx, logger, args.KafkaBootstrapServers, args.SecureOutputTopic,
+	secureProducer, err := producer.New(ctx, logger, args.KafkaBootstrapServers, args.OutputTopic,
 		producer.WithCredentials[*osprey.OspreyInputEvent](args.SASLUsername, args.SASLPassword),
 		producer.WithEnsureTopic[*osprey.OspreyInputEvent](true),
 		producer.WithTopicPartitions[*osprey.OspreyInputEvent](100),
@@ -139,7 +138,6 @@ func New(ctx context.Context, args *Args) (*Enricher, error) {
 		"bootstrap_serers", args.KafkaBootstrapServers,
 		"input-topic", args.InputTopic,
 		"output-topic", args.OutputTopic,
-		"secure-output-topic", args.SecureOutputTopic,
 	)
 
 	return &en, nil

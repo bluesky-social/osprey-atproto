@@ -44,10 +44,10 @@ func main() {
 				EnvVars: []string{"SASL_PASSWORD"},
 			},
 			&cli.StringFlag{
-				Name:    "secure-output-topic",
-				Usage:   "Kafka topic to produce to on the Secure Cluster",
+				Name:    "output-topic",
+				Usage:   "Kafka topic to produce to",
 				Value:   "moderation_enriched_records",
-				EnvVars: []string{"SECURE_OUTPUT_KAFKA_TOPIC"},
+				EnvVars: []string{"OUTPUT_KAFKA_TOPIC"},
 			},
 			&cli.StringFlag{
 				Name:    "abyss-url",
@@ -117,7 +117,6 @@ func main() {
 				SASLPassword:           cmd.String("sasl-password"),
 				InputTopic:             cmd.String("input-topic"),
 				OutputTopic:            cmd.String("output-topic"),
-				SecureOutputTopic:      cmd.String("secure-output-topic"),
 				AbyssURL:               cmd.String("abyss-url"),
 				AbyssAdminPassword:     cmd.String("abyss-admin-password"),
 				HiveAPIToken:           cmd.String("hive-api-token"),
