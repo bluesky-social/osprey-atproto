@@ -154,3 +154,93 @@ enum AtprotoReportKind {
   ATPROTO_REPORT_KIND_RUDE = 5;
   ATPROTO_REPORT_KIND_OTHER = 6;
 }
+
+message FirehoseEvent {
+  string did = 1;
+
+  google.protobuf.Timestamp timestamp = 2;
+  
+  EventKind kind = 3;
+
+  Commit commit = 4;
+  bytes account = 5;   // comatproto.SyncSubscribeRepos_Account as opaque bytes
+  bytes identity = 6;  // comatproto.SyncSubscribeRepos_Identity as opaque bytes
+}
+
+message Commit {
+  string rev = 1;
+  CommitOperation operation = 2;
+  string collection = 3;
+  string rkey = 4;
+  bytes record = 5;  // json.RawMessage as opaque bytes
+  string cid = 6;
+}
+
+// Enums for the constants (optional, but recommended for type safety)
+enum EventKind {
+  EVENT_KIND_UNSPECIFIED = 0;
+  EVENT_KIND_COMMIT = 1;
+  EVENT_KIND_ACCOUNT = 2;
+  EVENT_KIND_IDENTITY = 3;
+}
+
+enum CommitOperation {
+  COMMIT_OPERATION_UNSPECIFIED = 0;
+  COMMIT_OPERATION_CREATE = 1;
+  COMMIT_OPERATION_UPDATE = 2;
+  COMMIT_OPERATION_DELETE = 3;
+}
+
+message Cursor {
+  int64 sequence = 1;
+  bool saved_on_exit = 2;
+}
+
+message ModerationEnrichedFirehoseRecordEvent {
+  string did = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  string collection = 3;
+  string rkey = 4;
+  CommitOperation operation = 5;
+  bytes record = 6;  // json.RawMessage as opaque bytes
+  map<string, ImageDispatchResults> image_results = 7;  // map of image_cid to ImageDispatchResults
+
+  optional bytes ozone_repo_view_detail = 8; // JSON encoded repoViewDetail from Ozone for the actor
+  optional bytes did_doc = 9; // JSON encoded DID Document
+  optional bytes profile_view = 10; // JSON encoded ProfileViewDetailed from AppView
+  optional bytes did_audit_log = 11; // JSON encoded DID audit log
+
+  string cid = 12;
+}
+
+message ImageDispatchResults {
+  message AbyssResults {
+    optional bytes raw = 1;
+    optional string error = 2;
+    optional bool is_abuse_match = 3;
+  }
+
+  message HiveResults {
+    optional bytes raw = 1;
+    optional string error = 2;
+    map<string, double> classes = 3;  // map of class name to confidence score
+  }
+
+  message RetinaResults {
+    optional bytes raw = 1;
+    optional string error = 2;
+    optional string text = 3;  // OCR text result
+  }
+
+  message PrescreenResults {
+    optional bytes raw = 1;
+    optional string error = 2;
+    optional string decision = 3; // "nsfw", "sfw"
+  }
+
+  string cid = 1;
+  optional AbyssResults abyss = 2;
+  optional HiveResults hive = 3;
+  optional RetinaResults retina = 4;
+  optional PrescreenResults prescreen = 6;
+}

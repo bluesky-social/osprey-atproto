@@ -9,12 +9,13 @@
 package osprey
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -330,6 +331,111 @@ func (x AtprotoReportKind) Number() protoreflect.EnumNumber {
 // Deprecated: Use AtprotoReportKind.Descriptor instead.
 func (AtprotoReportKind) EnumDescriptor() ([]byte, []int) {
 	return file_osprey_atproto_proto_rawDescGZIP(), []int{4}
+}
+
+// Enums for the constants (optional, but recommended for type safety)
+type EventKind int32
+
+const (
+	EventKind_EVENT_KIND_UNSPECIFIED EventKind = 0
+	EventKind_EVENT_KIND_COMMIT      EventKind = 1
+	EventKind_EVENT_KIND_ACCOUNT     EventKind = 2
+	EventKind_EVENT_KIND_IDENTITY    EventKind = 3
+)
+
+// Enum value maps for EventKind.
+var (
+	EventKind_name = map[int32]string{
+		0: "EVENT_KIND_UNSPECIFIED",
+		1: "EVENT_KIND_COMMIT",
+		2: "EVENT_KIND_ACCOUNT",
+		3: "EVENT_KIND_IDENTITY",
+	}
+	EventKind_value = map[string]int32{
+		"EVENT_KIND_UNSPECIFIED": 0,
+		"EVENT_KIND_COMMIT":      1,
+		"EVENT_KIND_ACCOUNT":     2,
+		"EVENT_KIND_IDENTITY":    3,
+	}
+)
+
+func (x EventKind) Enum() *EventKind {
+	p := new(EventKind)
+	*p = x
+	return p
+}
+
+func (x EventKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (EventKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_osprey_atproto_proto_enumTypes[5].Descriptor()
+}
+
+func (EventKind) Type() protoreflect.EnumType {
+	return &file_osprey_atproto_proto_enumTypes[5]
+}
+
+func (x EventKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use EventKind.Descriptor instead.
+func (EventKind) EnumDescriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{5}
+}
+
+type CommitOperation int32
+
+const (
+	CommitOperation_COMMIT_OPERATION_UNSPECIFIED CommitOperation = 0
+	CommitOperation_COMMIT_OPERATION_CREATE      CommitOperation = 1
+	CommitOperation_COMMIT_OPERATION_UPDATE      CommitOperation = 2
+	CommitOperation_COMMIT_OPERATION_DELETE      CommitOperation = 3
+)
+
+// Enum value maps for CommitOperation.
+var (
+	CommitOperation_name = map[int32]string{
+		0: "COMMIT_OPERATION_UNSPECIFIED",
+		1: "COMMIT_OPERATION_CREATE",
+		2: "COMMIT_OPERATION_UPDATE",
+		3: "COMMIT_OPERATION_DELETE",
+	}
+	CommitOperation_value = map[string]int32{
+		"COMMIT_OPERATION_UNSPECIFIED": 0,
+		"COMMIT_OPERATION_CREATE":      1,
+		"COMMIT_OPERATION_UPDATE":      2,
+		"COMMIT_OPERATION_DELETE":      3,
+	}
+)
+
+func (x CommitOperation) Enum() *CommitOperation {
+	p := new(CommitOperation)
+	*p = x
+	return p
+}
+
+func (x CommitOperation) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CommitOperation) Descriptor() protoreflect.EnumDescriptor {
+	return file_osprey_atproto_proto_enumTypes[6].Descriptor()
+}
+
+func (CommitOperation) Type() protoreflect.EnumType {
+	return &file_osprey_atproto_proto_enumTypes[6]
+}
+
+func (x CommitOperation) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CommitOperation.Descriptor instead.
+func (CommitOperation) EnumDescriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{6}
 }
 
 type OspreyInputEvent struct {
@@ -1260,6 +1366,674 @@ func (x *ResultEvent) GetBigqueryFlags() []*BigQueryFlagEffect {
 	return nil
 }
 
+type FirehoseEvent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Did           string                 `protobuf:"bytes,1,opt,name=did,proto3" json:"did,omitempty"`
+	Timestamp     *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Kind          EventKind              `protobuf:"varint,3,opt,name=kind,proto3,enum=osprey.EventKind" json:"kind,omitempty"`
+	Commit        *Commit                `protobuf:"bytes,4,opt,name=commit,proto3" json:"commit,omitempty"`
+	Account       []byte                 `protobuf:"bytes,5,opt,name=account,proto3" json:"account,omitempty"`   // comatproto.SyncSubscribeRepos_Account as opaque bytes
+	Identity      []byte                 `protobuf:"bytes,6,opt,name=identity,proto3" json:"identity,omitempty"` // comatproto.SyncSubscribeRepos_Identity as opaque bytes
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FirehoseEvent) Reset() {
+	*x = FirehoseEvent{}
+	mi := &file_osprey_atproto_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FirehoseEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FirehoseEvent) ProtoMessage() {}
+
+func (x *FirehoseEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FirehoseEvent.ProtoReflect.Descriptor instead.
+func (*FirehoseEvent) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *FirehoseEvent) GetDid() string {
+	if x != nil {
+		return x.Did
+	}
+	return ""
+}
+
+func (x *FirehoseEvent) GetTimestamp() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Timestamp
+	}
+	return nil
+}
+
+func (x *FirehoseEvent) GetKind() EventKind {
+	if x != nil {
+		return x.Kind
+	}
+	return EventKind_EVENT_KIND_UNSPECIFIED
+}
+
+func (x *FirehoseEvent) GetCommit() *Commit {
+	if x != nil {
+		return x.Commit
+	}
+	return nil
+}
+
+func (x *FirehoseEvent) GetAccount() []byte {
+	if x != nil {
+		return x.Account
+	}
+	return nil
+}
+
+func (x *FirehoseEvent) GetIdentity() []byte {
+	if x != nil {
+		return x.Identity
+	}
+	return nil
+}
+
+type Commit struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rev           string                 `protobuf:"bytes,1,opt,name=rev,proto3" json:"rev,omitempty"`
+	Operation     CommitOperation        `protobuf:"varint,2,opt,name=operation,proto3,enum=osprey.CommitOperation" json:"operation,omitempty"`
+	Collection    string                 `protobuf:"bytes,3,opt,name=collection,proto3" json:"collection,omitempty"`
+	Rkey          string                 `protobuf:"bytes,4,opt,name=rkey,proto3" json:"rkey,omitempty"`
+	Record        []byte                 `protobuf:"bytes,5,opt,name=record,proto3" json:"record,omitempty"` // json.RawMessage as opaque bytes
+	Cid           string                 `protobuf:"bytes,6,opt,name=cid,proto3" json:"cid,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Commit) Reset() {
+	*x = Commit{}
+	mi := &file_osprey_atproto_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Commit) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Commit) ProtoMessage() {}
+
+func (x *Commit) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Commit.ProtoReflect.Descriptor instead.
+func (*Commit) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *Commit) GetRev() string {
+	if x != nil {
+		return x.Rev
+	}
+	return ""
+}
+
+func (x *Commit) GetOperation() CommitOperation {
+	if x != nil {
+		return x.Operation
+	}
+	return CommitOperation_COMMIT_OPERATION_UNSPECIFIED
+}
+
+func (x *Commit) GetCollection() string {
+	if x != nil {
+		return x.Collection
+	}
+	return ""
+}
+
+func (x *Commit) GetRkey() string {
+	if x != nil {
+		return x.Rkey
+	}
+	return ""
+}
+
+func (x *Commit) GetRecord() []byte {
+	if x != nil {
+		return x.Record
+	}
+	return nil
+}
+
+func (x *Commit) GetCid() string {
+	if x != nil {
+		return x.Cid
+	}
+	return ""
+}
+
+type Cursor struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Sequence      int64                  `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	SavedOnExit   bool                   `protobuf:"varint,2,opt,name=saved_on_exit,json=savedOnExit,proto3" json:"saved_on_exit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Cursor) Reset() {
+	*x = Cursor{}
+	mi := &file_osprey_atproto_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Cursor) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Cursor) ProtoMessage() {}
+
+func (x *Cursor) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Cursor.ProtoReflect.Descriptor instead.
+func (*Cursor) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *Cursor) GetSequence() int64 {
+	if x != nil {
+		return x.Sequence
+	}
+	return 0
+}
+
+func (x *Cursor) GetSavedOnExit() bool {
+	if x != nil {
+		return x.SavedOnExit
+	}
+	return false
+}
+
+type ModerationEnrichedFirehoseRecordEvent struct {
+	state               protoimpl.MessageState           `protogen:"open.v1"`
+	Did                 string                           `protobuf:"bytes,1,opt,name=did,proto3" json:"did,omitempty"`
+	Timestamp           *timestamppb.Timestamp           `protobuf:"bytes,2,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Collection          string                           `protobuf:"bytes,3,opt,name=collection,proto3" json:"collection,omitempty"`
+	Rkey                string                           `protobuf:"bytes,4,opt,name=rkey,proto3" json:"rkey,omitempty"`
+	Operation           CommitOperation                  `protobuf:"varint,5,opt,name=operation,proto3,enum=osprey.CommitOperation" json:"operation,omitempty"`
+	Record              []byte                           `protobuf:"bytes,6,opt,name=record,proto3" json:"record,omitempty"`                                                                                                           // json.RawMessage as opaque bytes
+	ImageResults        map[string]*ImageDispatchResults `protobuf:"bytes,7,rep,name=image_results,json=imageResults,proto3" json:"image_results,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"` // map of image_cid to ImageDispatchResults
+	OzoneRepoViewDetail []byte                           `protobuf:"bytes,8,opt,name=ozone_repo_view_detail,json=ozoneRepoViewDetail,proto3,oneof" json:"ozone_repo_view_detail,omitempty"`                                            // JSON encoded repoViewDetail from Ozone for the actor
+	DidDoc              []byte                           `protobuf:"bytes,9,opt,name=did_doc,json=didDoc,proto3,oneof" json:"did_doc,omitempty"`                                                                                       // JSON encoded DID Document
+	ProfileView         []byte                           `protobuf:"bytes,10,opt,name=profile_view,json=profileView,proto3,oneof" json:"profile_view,omitempty"`                                                                       // JSON encoded ProfileViewDetailed from AppView
+	DidAuditLog         []byte                           `protobuf:"bytes,11,opt,name=did_audit_log,json=didAuditLog,proto3,oneof" json:"did_audit_log,omitempty"`                                                                     // JSON encoded DID audit log
+	Cid                 string                           `protobuf:"bytes,12,opt,name=cid,proto3" json:"cid,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) Reset() {
+	*x = ModerationEnrichedFirehoseRecordEvent{}
+	mi := &file_osprey_atproto_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ModerationEnrichedFirehoseRecordEvent) ProtoMessage() {}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ModerationEnrichedFirehoseRecordEvent.ProtoReflect.Descriptor instead.
+func (*ModerationEnrichedFirehoseRecordEvent) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetDid() string {
+	if x != nil {
+		return x.Did
+	}
+	return ""
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetTimestamp() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Timestamp
+	}
+	return nil
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetCollection() string {
+	if x != nil {
+		return x.Collection
+	}
+	return ""
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetRkey() string {
+	if x != nil {
+		return x.Rkey
+	}
+	return ""
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetOperation() CommitOperation {
+	if x != nil {
+		return x.Operation
+	}
+	return CommitOperation_COMMIT_OPERATION_UNSPECIFIED
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetRecord() []byte {
+	if x != nil {
+		return x.Record
+	}
+	return nil
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetImageResults() map[string]*ImageDispatchResults {
+	if x != nil {
+		return x.ImageResults
+	}
+	return nil
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetOzoneRepoViewDetail() []byte {
+	if x != nil {
+		return x.OzoneRepoViewDetail
+	}
+	return nil
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetDidDoc() []byte {
+	if x != nil {
+		return x.DidDoc
+	}
+	return nil
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetProfileView() []byte {
+	if x != nil {
+		return x.ProfileView
+	}
+	return nil
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetDidAuditLog() []byte {
+	if x != nil {
+		return x.DidAuditLog
+	}
+	return nil
+}
+
+func (x *ModerationEnrichedFirehoseRecordEvent) GetCid() string {
+	if x != nil {
+		return x.Cid
+	}
+	return ""
+}
+
+type ImageDispatchResults struct {
+	state         protoimpl.MessageState                 `protogen:"open.v1"`
+	Cid           string                                 `protobuf:"bytes,1,opt,name=cid,proto3" json:"cid,omitempty"`
+	Abyss         *ImageDispatchResults_AbyssResults     `protobuf:"bytes,2,opt,name=abyss,proto3,oneof" json:"abyss,omitempty"`
+	Hive          *ImageDispatchResults_HiveResults      `protobuf:"bytes,3,opt,name=hive,proto3,oneof" json:"hive,omitempty"`
+	Retina        *ImageDispatchResults_RetinaResults    `protobuf:"bytes,4,opt,name=retina,proto3,oneof" json:"retina,omitempty"`
+	Prescreen     *ImageDispatchResults_PrescreenResults `protobuf:"bytes,6,opt,name=prescreen,proto3,oneof" json:"prescreen,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImageDispatchResults) Reset() {
+	*x = ImageDispatchResults{}
+	mi := &file_osprey_atproto_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageDispatchResults) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageDispatchResults) ProtoMessage() {}
+
+func (x *ImageDispatchResults) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageDispatchResults.ProtoReflect.Descriptor instead.
+func (*ImageDispatchResults) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ImageDispatchResults) GetCid() string {
+	if x != nil {
+		return x.Cid
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults) GetAbyss() *ImageDispatchResults_AbyssResults {
+	if x != nil {
+		return x.Abyss
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults) GetHive() *ImageDispatchResults_HiveResults {
+	if x != nil {
+		return x.Hive
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults) GetRetina() *ImageDispatchResults_RetinaResults {
+	if x != nil {
+		return x.Retina
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults) GetPrescreen() *ImageDispatchResults_PrescreenResults {
+	if x != nil {
+		return x.Prescreen
+	}
+	return nil
+}
+
+type ImageDispatchResults_AbyssResults struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Raw           []byte                 `protobuf:"bytes,1,opt,name=raw,proto3,oneof" json:"raw,omitempty"`
+	Error         *string                `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error,omitempty"`
+	IsAbuseMatch  *bool                  `protobuf:"varint,3,opt,name=is_abuse_match,json=isAbuseMatch,proto3,oneof" json:"is_abuse_match,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImageDispatchResults_AbyssResults) Reset() {
+	*x = ImageDispatchResults_AbyssResults{}
+	mi := &file_osprey_atproto_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageDispatchResults_AbyssResults) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageDispatchResults_AbyssResults) ProtoMessage() {}
+
+func (x *ImageDispatchResults_AbyssResults) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageDispatchResults_AbyssResults.ProtoReflect.Descriptor instead.
+func (*ImageDispatchResults_AbyssResults) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{16, 0}
+}
+
+func (x *ImageDispatchResults_AbyssResults) GetRaw() []byte {
+	if x != nil {
+		return x.Raw
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults_AbyssResults) GetError() string {
+	if x != nil && x.Error != nil {
+		return *x.Error
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_AbyssResults) GetIsAbuseMatch() bool {
+	if x != nil && x.IsAbuseMatch != nil {
+		return *x.IsAbuseMatch
+	}
+	return false
+}
+
+type ImageDispatchResults_HiveResults struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Raw           []byte                 `protobuf:"bytes,1,opt,name=raw,proto3,oneof" json:"raw,omitempty"`
+	Error         *string                `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error,omitempty"`
+	Classes       map[string]float64     `protobuf:"bytes,3,rep,name=classes,proto3" json:"classes,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"fixed64,2,opt,name=value"` // map of class name to confidence score
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImageDispatchResults_HiveResults) Reset() {
+	*x = ImageDispatchResults_HiveResults{}
+	mi := &file_osprey_atproto_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageDispatchResults_HiveResults) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageDispatchResults_HiveResults) ProtoMessage() {}
+
+func (x *ImageDispatchResults_HiveResults) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageDispatchResults_HiveResults.ProtoReflect.Descriptor instead.
+func (*ImageDispatchResults_HiveResults) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{16, 1}
+}
+
+func (x *ImageDispatchResults_HiveResults) GetRaw() []byte {
+	if x != nil {
+		return x.Raw
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults_HiveResults) GetError() string {
+	if x != nil && x.Error != nil {
+		return *x.Error
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_HiveResults) GetClasses() map[string]float64 {
+	if x != nil {
+		return x.Classes
+	}
+	return nil
+}
+
+type ImageDispatchResults_RetinaResults struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Raw           []byte                 `protobuf:"bytes,1,opt,name=raw,proto3,oneof" json:"raw,omitempty"`
+	Error         *string                `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error,omitempty"`
+	Text          *string                `protobuf:"bytes,3,opt,name=text,proto3,oneof" json:"text,omitempty"` // OCR text result
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImageDispatchResults_RetinaResults) Reset() {
+	*x = ImageDispatchResults_RetinaResults{}
+	mi := &file_osprey_atproto_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageDispatchResults_RetinaResults) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageDispatchResults_RetinaResults) ProtoMessage() {}
+
+func (x *ImageDispatchResults_RetinaResults) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageDispatchResults_RetinaResults.ProtoReflect.Descriptor instead.
+func (*ImageDispatchResults_RetinaResults) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{16, 2}
+}
+
+func (x *ImageDispatchResults_RetinaResults) GetRaw() []byte {
+	if x != nil {
+		return x.Raw
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults_RetinaResults) GetError() string {
+	if x != nil && x.Error != nil {
+		return *x.Error
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_RetinaResults) GetText() string {
+	if x != nil && x.Text != nil {
+		return *x.Text
+	}
+	return ""
+}
+
+type ImageDispatchResults_PrescreenResults struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Raw           []byte                 `protobuf:"bytes,1,opt,name=raw,proto3,oneof" json:"raw,omitempty"`
+	Error         *string                `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error,omitempty"`
+	Decision      *string                `protobuf:"bytes,3,opt,name=decision,proto3,oneof" json:"decision,omitempty"` // "nsfw", "sfw"
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImageDispatchResults_PrescreenResults) Reset() {
+	*x = ImageDispatchResults_PrescreenResults{}
+	mi := &file_osprey_atproto_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageDispatchResults_PrescreenResults) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageDispatchResults_PrescreenResults) ProtoMessage() {}
+
+func (x *ImageDispatchResults_PrescreenResults) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageDispatchResults_PrescreenResults.ProtoReflect.Descriptor instead.
+func (*ImageDispatchResults_PrescreenResults) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{16, 3}
+}
+
+func (x *ImageDispatchResults_PrescreenResults) GetRaw() []byte {
+	if x != nil {
+		return x.Raw
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults_PrescreenResults) GetError() string {
+	if x != nil && x.Error != nil {
+		return *x.Error
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_PrescreenResults) GetDecision() string {
+	if x != nil && x.Decision != nil {
+		return *x.Decision
+	}
+	return ""
+}
+
 var File_osprey_atproto_proto protoreflect.FileDescriptor
 
 const file_osprey_atproto_proto_rawDesc = "" +
@@ -1363,7 +2137,91 @@ const file_osprey_atproto_proto_rawDesc = "" +
 	"\vescalations\x18\r \x03(\v2\x1d.osprey.AtprotoEscalateEffectR\vescalations\x12L\n" +
 	"\x10acknowledgements\x18\x0e \x03(\v2 .osprey.AtprotoAcknowledgeEffectR\x10acknowledgements\x125\n" +
 	"\areports\x18\x0f \x03(\v2\x1b.osprey.AtprotoReportEffectR\areports\x12@\n" +
-	"\rbigqueryFlags\x18\x10 \x03(\v2\x1a.osprey.BigQueryFlagEffectR\rbigqueryFlags*t\n" +
+	"\rbigqueryFlags\x18\x10 \x03(\v2\x1a.osprey.BigQueryFlagEffectR\rbigqueryFlags\"\xe0\x01\n" +
+	"\rFirehoseEvent\x12\x10\n" +
+	"\x03did\x18\x01 \x01(\tR\x03did\x128\n" +
+	"\ttimestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12%\n" +
+	"\x04kind\x18\x03 \x01(\x0e2\x11.osprey.EventKindR\x04kind\x12&\n" +
+	"\x06commit\x18\x04 \x01(\v2\x0e.osprey.CommitR\x06commit\x12\x18\n" +
+	"\aaccount\x18\x05 \x01(\fR\aaccount\x12\x1a\n" +
+	"\bidentity\x18\x06 \x01(\fR\bidentity\"\xaf\x01\n" +
+	"\x06Commit\x12\x10\n" +
+	"\x03rev\x18\x01 \x01(\tR\x03rev\x125\n" +
+	"\toperation\x18\x02 \x01(\x0e2\x17.osprey.CommitOperationR\toperation\x12\x1e\n" +
+	"\n" +
+	"collection\x18\x03 \x01(\tR\n" +
+	"collection\x12\x12\n" +
+	"\x04rkey\x18\x04 \x01(\tR\x04rkey\x12\x16\n" +
+	"\x06record\x18\x05 \x01(\fR\x06record\x12\x10\n" +
+	"\x03cid\x18\x06 \x01(\tR\x03cid\"H\n" +
+	"\x06Cursor\x12\x1a\n" +
+	"\bsequence\x18\x01 \x01(\x03R\bsequence\x12\"\n" +
+	"\rsaved_on_exit\x18\x02 \x01(\bR\vsavedOnExit\"\xc0\x05\n" +
+	"%ModerationEnrichedFirehoseRecordEvent\x12\x10\n" +
+	"\x03did\x18\x01 \x01(\tR\x03did\x128\n" +
+	"\ttimestamp\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestamp\x12\x1e\n" +
+	"\n" +
+	"collection\x18\x03 \x01(\tR\n" +
+	"collection\x12\x12\n" +
+	"\x04rkey\x18\x04 \x01(\tR\x04rkey\x125\n" +
+	"\toperation\x18\x05 \x01(\x0e2\x17.osprey.CommitOperationR\toperation\x12\x16\n" +
+	"\x06record\x18\x06 \x01(\fR\x06record\x12d\n" +
+	"\rimage_results\x18\a \x03(\v2?.osprey.ModerationEnrichedFirehoseRecordEvent.ImageResultsEntryR\fimageResults\x128\n" +
+	"\x16ozone_repo_view_detail\x18\b \x01(\fH\x00R\x13ozoneRepoViewDetail\x88\x01\x01\x12\x1c\n" +
+	"\adid_doc\x18\t \x01(\fH\x01R\x06didDoc\x88\x01\x01\x12&\n" +
+	"\fprofile_view\x18\n" +
+	" \x01(\fH\x02R\vprofileView\x88\x01\x01\x12'\n" +
+	"\rdid_audit_log\x18\v \x01(\fH\x03R\vdidAuditLog\x88\x01\x01\x12\x10\n" +
+	"\x03cid\x18\f \x01(\tR\x03cid\x1a]\n" +
+	"\x11ImageResultsEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x122\n" +
+	"\x05value\x18\x02 \x01(\v2\x1c.osprey.ImageDispatchResultsR\x05value:\x028\x01B\x19\n" +
+	"\x17_ozone_repo_view_detailB\n" +
+	"\n" +
+	"\b_did_docB\x0f\n" +
+	"\r_profile_viewB\x10\n" +
+	"\x0e_did_audit_log\"\xea\a\n" +
+	"\x14ImageDispatchResults\x12\x10\n" +
+	"\x03cid\x18\x01 \x01(\tR\x03cid\x12D\n" +
+	"\x05abyss\x18\x02 \x01(\v2).osprey.ImageDispatchResults.AbyssResultsH\x00R\x05abyss\x88\x01\x01\x12A\n" +
+	"\x04hive\x18\x03 \x01(\v2(.osprey.ImageDispatchResults.HiveResultsH\x01R\x04hive\x88\x01\x01\x12G\n" +
+	"\x06retina\x18\x04 \x01(\v2*.osprey.ImageDispatchResults.RetinaResultsH\x02R\x06retina\x88\x01\x01\x12P\n" +
+	"\tprescreen\x18\x06 \x01(\v2-.osprey.ImageDispatchResults.PrescreenResultsH\x03R\tprescreen\x88\x01\x01\x1a\x90\x01\n" +
+	"\fAbyssResults\x12\x15\n" +
+	"\x03raw\x18\x01 \x01(\fH\x00R\x03raw\x88\x01\x01\x12\x19\n" +
+	"\x05error\x18\x02 \x01(\tH\x01R\x05error\x88\x01\x01\x12)\n" +
+	"\x0eis_abuse_match\x18\x03 \x01(\bH\x02R\fisAbuseMatch\x88\x01\x01B\x06\n" +
+	"\x04_rawB\b\n" +
+	"\x06_errorB\x11\n" +
+	"\x0f_is_abuse_match\x1a\xde\x01\n" +
+	"\vHiveResults\x12\x15\n" +
+	"\x03raw\x18\x01 \x01(\fH\x00R\x03raw\x88\x01\x01\x12\x19\n" +
+	"\x05error\x18\x02 \x01(\tH\x01R\x05error\x88\x01\x01\x12O\n" +
+	"\aclasses\x18\x03 \x03(\v25.osprey.ImageDispatchResults.HiveResults.ClassesEntryR\aclasses\x1a:\n" +
+	"\fClassesEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\x01R\x05value:\x028\x01B\x06\n" +
+	"\x04_rawB\b\n" +
+	"\x06_error\x1au\n" +
+	"\rRetinaResults\x12\x15\n" +
+	"\x03raw\x18\x01 \x01(\fH\x00R\x03raw\x88\x01\x01\x12\x19\n" +
+	"\x05error\x18\x02 \x01(\tH\x01R\x05error\x88\x01\x01\x12\x17\n" +
+	"\x04text\x18\x03 \x01(\tH\x02R\x04text\x88\x01\x01B\x06\n" +
+	"\x04_rawB\b\n" +
+	"\x06_errorB\a\n" +
+	"\x05_text\x1a\x84\x01\n" +
+	"\x10PrescreenResults\x12\x15\n" +
+	"\x03raw\x18\x01 \x01(\fH\x00R\x03raw\x88\x01\x01\x12\x19\n" +
+	"\x05error\x18\x02 \x01(\tH\x01R\x05error\x88\x01\x01\x12\x1f\n" +
+	"\bdecision\x18\x03 \x01(\tH\x02R\bdecision\x88\x01\x01B\x06\n" +
+	"\x04_rawB\b\n" +
+	"\x06_errorB\v\n" +
+	"\t_decisionB\b\n" +
+	"\x06_abyssB\a\n" +
+	"\x05_hiveB\t\n" +
+	"\a_retinaB\f\n" +
+	"\n" +
+	"_prescreen*t\n" +
 	"\x12AtprotoSubjectKind\x12\x1d\n" +
 	"\x19ATPROTO_SUBJECT_KIND_NONE\x10\x00\x12\x1e\n" +
 	"\x1aATPROTO_SUBJECT_KIND_ACTOR\x10\x01\x12\x1f\n" +
@@ -1404,7 +2262,17 @@ const file_osprey_atproto_proto_rawDesc = "" +
 	"\x1eATPROTO_REPORT_KIND_MISLEADING\x10\x03\x12\x1e\n" +
 	"\x1aATPROTO_REPORT_KIND_SEXUAL\x10\x04\x12\x1c\n" +
 	"\x18ATPROTO_REPORT_KIND_RUDE\x10\x05\x12\x1d\n" +
-	"\x19ATPROTO_REPORT_KIND_OTHER\x10\x06Bc\n" +
+	"\x19ATPROTO_REPORT_KIND_OTHER\x10\x06*o\n" +
+	"\tEventKind\x12\x1a\n" +
+	"\x16EVENT_KIND_UNSPECIFIED\x10\x00\x12\x15\n" +
+	"\x11EVENT_KIND_COMMIT\x10\x01\x12\x16\n" +
+	"\x12EVENT_KIND_ACCOUNT\x10\x02\x12\x17\n" +
+	"\x13EVENT_KIND_IDENTITY\x10\x03*\x8a\x01\n" +
+	"\x0fCommitOperation\x12 \n" +
+	"\x1cCOMMIT_OPERATION_UNSPECIFIED\x10\x00\x12\x1b\n" +
+	"\x17COMMIT_OPERATION_CREATE\x10\x01\x12\x1b\n" +
+	"\x17COMMIT_OPERATION_UPDATE\x10\x02\x12\x1b\n" +
+	"\x17COMMIT_OPERATION_DELETE\x10\x03Bc\n" +
 	"\n" +
 	"com.ospreyB\x12OspreyAtprotoProtoP\x01Z\t./;osprey\xa2\x02\x03OXX\xaa\x02\x06Osprey\xca\x02\x06Osprey\xe2\x02\x12Osprey\\GPBMetadata\xea\x02\x06Ospreyb\x06proto3"
 
@@ -1420,34 +2288,47 @@ func file_osprey_atproto_proto_rawDescGZIP() []byte {
 	return file_osprey_atproto_proto_rawDescData
 }
 
-var file_osprey_atproto_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_osprey_atproto_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_osprey_atproto_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
+var file_osprey_atproto_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
 var file_osprey_atproto_proto_goTypes = []any{
-	(AtprotoSubjectKind)(0),          // 0: osprey.AtprotoSubjectKind
-	(AtprotoLabel)(0),                // 1: osprey.AtprotoLabel
-	(AtprotoEffectKind)(0),           // 2: osprey.AtprotoEffectKind
-	(AtprotoEmail)(0),                // 3: osprey.AtprotoEmail
-	(AtprotoReportKind)(0),           // 4: osprey.AtprotoReportKind
-	(*OspreyInputEvent)(nil),         // 5: osprey.OspreyInputEvent
-	(*OspreyInputEventData)(nil),     // 6: osprey.OspreyInputEventData
-	(*AtprotoLabelEffect)(nil),       // 7: osprey.AtprotoLabelEffect
-	(*AtprotoTagEffect)(nil),         // 8: osprey.AtprotoTagEffect
-	(*AtprotoTakedownEffect)(nil),    // 9: osprey.AtprotoTakedownEffect
-	(*AtprotoEmailEffect)(nil),       // 10: osprey.AtprotoEmailEffect
-	(*AtprotoCommentEffect)(nil),     // 11: osprey.AtprotoCommentEffect
-	(*AtprotoEscalateEffect)(nil),    // 12: osprey.AtprotoEscalateEffect
-	(*AtprotoAcknowledgeEffect)(nil), // 13: osprey.AtprotoAcknowledgeEffect
-	(*AtprotoReportEffect)(nil),      // 14: osprey.AtprotoReportEffect
-	(*BigQueryFlagEffect)(nil),       // 15: osprey.BigQueryFlagEffect
-	(*ResultEvent)(nil),              // 16: osprey.ResultEvent
-	nil,                              // 17: osprey.OspreyInputEventData.SecretDataEntry
-	(*timestamppb.Timestamp)(nil),    // 18: google.protobuf.Timestamp
+	(AtprotoSubjectKind)(0),                       // 0: osprey.AtprotoSubjectKind
+	(AtprotoLabel)(0),                             // 1: osprey.AtprotoLabel
+	(AtprotoEffectKind)(0),                        // 2: osprey.AtprotoEffectKind
+	(AtprotoEmail)(0),                             // 3: osprey.AtprotoEmail
+	(AtprotoReportKind)(0),                        // 4: osprey.AtprotoReportKind
+	(EventKind)(0),                                // 5: osprey.EventKind
+	(CommitOperation)(0),                          // 6: osprey.CommitOperation
+	(*OspreyInputEvent)(nil),                      // 7: osprey.OspreyInputEvent
+	(*OspreyInputEventData)(nil),                  // 8: osprey.OspreyInputEventData
+	(*AtprotoLabelEffect)(nil),                    // 9: osprey.AtprotoLabelEffect
+	(*AtprotoTagEffect)(nil),                      // 10: osprey.AtprotoTagEffect
+	(*AtprotoTakedownEffect)(nil),                 // 11: osprey.AtprotoTakedownEffect
+	(*AtprotoEmailEffect)(nil),                    // 12: osprey.AtprotoEmailEffect
+	(*AtprotoCommentEffect)(nil),                  // 13: osprey.AtprotoCommentEffect
+	(*AtprotoEscalateEffect)(nil),                 // 14: osprey.AtprotoEscalateEffect
+	(*AtprotoAcknowledgeEffect)(nil),              // 15: osprey.AtprotoAcknowledgeEffect
+	(*AtprotoReportEffect)(nil),                   // 16: osprey.AtprotoReportEffect
+	(*BigQueryFlagEffect)(nil),                    // 17: osprey.BigQueryFlagEffect
+	(*ResultEvent)(nil),                           // 18: osprey.ResultEvent
+	(*FirehoseEvent)(nil),                         // 19: osprey.FirehoseEvent
+	(*Commit)(nil),                                // 20: osprey.Commit
+	(*Cursor)(nil),                                // 21: osprey.Cursor
+	(*ModerationEnrichedFirehoseRecordEvent)(nil), // 22: osprey.ModerationEnrichedFirehoseRecordEvent
+	(*ImageDispatchResults)(nil),                  // 23: osprey.ImageDispatchResults
+	nil,                                           // 24: osprey.OspreyInputEventData.SecretDataEntry
+	nil,                                           // 25: osprey.ModerationEnrichedFirehoseRecordEvent.ImageResultsEntry
+	(*ImageDispatchResults_AbyssResults)(nil),     // 26: osprey.ImageDispatchResults.AbyssResults
+	(*ImageDispatchResults_HiveResults)(nil),      // 27: osprey.ImageDispatchResults.HiveResults
+	(*ImageDispatchResults_RetinaResults)(nil),    // 28: osprey.ImageDispatchResults.RetinaResults
+	(*ImageDispatchResults_PrescreenResults)(nil), // 29: osprey.ImageDispatchResults.PrescreenResults
+	nil,                           // 30: osprey.ImageDispatchResults.HiveResults.ClassesEntry
+	(*timestamppb.Timestamp)(nil), // 31: google.protobuf.Timestamp
 }
 var file_osprey_atproto_proto_depIdxs = []int32{
-	6,  // 0: osprey.OspreyInputEvent.data:type_name -> osprey.OspreyInputEventData
-	18, // 1: osprey.OspreyInputEvent.send_time:type_name -> google.protobuf.Timestamp
-	18, // 2: osprey.OspreyInputEventData.timestamp:type_name -> google.protobuf.Timestamp
-	17, // 3: osprey.OspreyInputEventData.secret_data:type_name -> osprey.OspreyInputEventData.SecretDataEntry
+	8,  // 0: osprey.OspreyInputEvent.data:type_name -> osprey.OspreyInputEventData
+	31, // 1: osprey.OspreyInputEvent.send_time:type_name -> google.protobuf.Timestamp
+	31, // 2: osprey.OspreyInputEventData.timestamp:type_name -> google.protobuf.Timestamp
+	24, // 3: osprey.OspreyInputEventData.secret_data:type_name -> osprey.OspreyInputEventData.SecretDataEntry
 	2,  // 4: osprey.AtprotoLabelEffect.effect_kind:type_name -> osprey.AtprotoEffectKind
 	0,  // 5: osprey.AtprotoLabelEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
 	1,  // 6: osprey.AtprotoLabelEffect.label:type_name -> osprey.AtprotoLabel
@@ -1464,21 +2345,34 @@ var file_osprey_atproto_proto_depIdxs = []int32{
 	0,  // 17: osprey.AtprotoReportEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
 	4,  // 18: osprey.AtprotoReportEffect.report_kind:type_name -> osprey.AtprotoReportKind
 	0,  // 19: osprey.BigQueryFlagEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	18, // 20: osprey.ResultEvent.send_time:type_name -> google.protobuf.Timestamp
-	7,  // 21: osprey.ResultEvent.labels:type_name -> osprey.AtprotoLabelEffect
-	8,  // 22: osprey.ResultEvent.tags:type_name -> osprey.AtprotoTagEffect
-	9,  // 23: osprey.ResultEvent.takedowns:type_name -> osprey.AtprotoTakedownEffect
-	10, // 24: osprey.ResultEvent.emails:type_name -> osprey.AtprotoEmailEffect
-	11, // 25: osprey.ResultEvent.comments:type_name -> osprey.AtprotoCommentEffect
-	12, // 26: osprey.ResultEvent.escalations:type_name -> osprey.AtprotoEscalateEffect
-	13, // 27: osprey.ResultEvent.acknowledgements:type_name -> osprey.AtprotoAcknowledgeEffect
-	14, // 28: osprey.ResultEvent.reports:type_name -> osprey.AtprotoReportEffect
-	15, // 29: osprey.ResultEvent.bigqueryFlags:type_name -> osprey.BigQueryFlagEffect
-	30, // [30:30] is the sub-list for method output_type
-	30, // [30:30] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	31, // 20: osprey.ResultEvent.send_time:type_name -> google.protobuf.Timestamp
+	9,  // 21: osprey.ResultEvent.labels:type_name -> osprey.AtprotoLabelEffect
+	10, // 22: osprey.ResultEvent.tags:type_name -> osprey.AtprotoTagEffect
+	11, // 23: osprey.ResultEvent.takedowns:type_name -> osprey.AtprotoTakedownEffect
+	12, // 24: osprey.ResultEvent.emails:type_name -> osprey.AtprotoEmailEffect
+	13, // 25: osprey.ResultEvent.comments:type_name -> osprey.AtprotoCommentEffect
+	14, // 26: osprey.ResultEvent.escalations:type_name -> osprey.AtprotoEscalateEffect
+	15, // 27: osprey.ResultEvent.acknowledgements:type_name -> osprey.AtprotoAcknowledgeEffect
+	16, // 28: osprey.ResultEvent.reports:type_name -> osprey.AtprotoReportEffect
+	17, // 29: osprey.ResultEvent.bigqueryFlags:type_name -> osprey.BigQueryFlagEffect
+	31, // 30: osprey.FirehoseEvent.timestamp:type_name -> google.protobuf.Timestamp
+	5,  // 31: osprey.FirehoseEvent.kind:type_name -> osprey.EventKind
+	20, // 32: osprey.FirehoseEvent.commit:type_name -> osprey.Commit
+	6,  // 33: osprey.Commit.operation:type_name -> osprey.CommitOperation
+	31, // 34: osprey.ModerationEnrichedFirehoseRecordEvent.timestamp:type_name -> google.protobuf.Timestamp
+	6,  // 35: osprey.ModerationEnrichedFirehoseRecordEvent.operation:type_name -> osprey.CommitOperation
+	25, // 36: osprey.ModerationEnrichedFirehoseRecordEvent.image_results:type_name -> osprey.ModerationEnrichedFirehoseRecordEvent.ImageResultsEntry
+	26, // 37: osprey.ImageDispatchResults.abyss:type_name -> osprey.ImageDispatchResults.AbyssResults
+	27, // 38: osprey.ImageDispatchResults.hive:type_name -> osprey.ImageDispatchResults.HiveResults
+	28, // 39: osprey.ImageDispatchResults.retina:type_name -> osprey.ImageDispatchResults.RetinaResults
+	29, // 40: osprey.ImageDispatchResults.prescreen:type_name -> osprey.ImageDispatchResults.PrescreenResults
+	23, // 41: osprey.ModerationEnrichedFirehoseRecordEvent.ImageResultsEntry.value:type_name -> osprey.ImageDispatchResults
+	30, // 42: osprey.ImageDispatchResults.HiveResults.classes:type_name -> osprey.ImageDispatchResults.HiveResults.ClassesEntry
+	43, // [43:43] is the sub-list for method output_type
+	43, // [43:43] is the sub-list for method input_type
+	43, // [43:43] is the sub-list for extension type_name
+	43, // [43:43] is the sub-list for extension extendee
+	0,  // [0:43] is the sub-list for field type_name
 }
 
 func init() { file_osprey_atproto_proto_init() }
@@ -1494,13 +2388,19 @@ func file_osprey_atproto_proto_init() {
 	file_osprey_atproto_proto_msgTypes[8].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[9].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[10].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[15].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[16].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[19].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[20].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[21].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[22].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_osprey_atproto_proto_rawDesc), len(file_osprey_atproto_proto_rawDesc)),
-			NumEnums:      5,
-			NumMessages:   13,
+			NumEnums:      7,
+			NumMessages:   24,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

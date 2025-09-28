@@ -57,6 +57,20 @@ class AtprotoReportKind(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ATPROTO_REPORT_KIND_SEXUAL: _ClassVar[AtprotoReportKind]
     ATPROTO_REPORT_KIND_RUDE: _ClassVar[AtprotoReportKind]
     ATPROTO_REPORT_KIND_OTHER: _ClassVar[AtprotoReportKind]
+
+class EventKind(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    EVENT_KIND_UNSPECIFIED: _ClassVar[EventKind]
+    EVENT_KIND_COMMIT: _ClassVar[EventKind]
+    EVENT_KIND_ACCOUNT: _ClassVar[EventKind]
+    EVENT_KIND_IDENTITY: _ClassVar[EventKind]
+
+class CommitOperation(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
+    __slots__ = ()
+    COMMIT_OPERATION_UNSPECIFIED: _ClassVar[CommitOperation]
+    COMMIT_OPERATION_CREATE: _ClassVar[CommitOperation]
+    COMMIT_OPERATION_UPDATE: _ClassVar[CommitOperation]
+    COMMIT_OPERATION_DELETE: _ClassVar[CommitOperation]
 ATPROTO_SUBJECT_KIND_NONE: AtprotoSubjectKind
 ATPROTO_SUBJECT_KIND_ACTOR: AtprotoSubjectKind
 ATPROTO_SUBJECT_KIND_RECORD: AtprotoSubjectKind
@@ -93,6 +107,14 @@ ATPROTO_REPORT_KIND_MISLEADING: AtprotoReportKind
 ATPROTO_REPORT_KIND_SEXUAL: AtprotoReportKind
 ATPROTO_REPORT_KIND_RUDE: AtprotoReportKind
 ATPROTO_REPORT_KIND_OTHER: AtprotoReportKind
+EVENT_KIND_UNSPECIFIED: EventKind
+EVENT_KIND_COMMIT: EventKind
+EVENT_KIND_ACCOUNT: EventKind
+EVENT_KIND_IDENTITY: EventKind
+COMMIT_OPERATION_UNSPECIFIED: CommitOperation
+COMMIT_OPERATION_CREATE: CommitOperation
+COMMIT_OPERATION_UPDATE: CommitOperation
+COMMIT_OPERATION_DELETE: CommitOperation
 
 class OspreyInputEvent(_message.Message):
     __slots__ = ("data", "send_time")
@@ -272,3 +294,135 @@ class ResultEvent(_message.Message):
     reports: _containers.RepeatedCompositeFieldContainer[AtprotoReportEffect]
     bigqueryFlags: _containers.RepeatedCompositeFieldContainer[BigQueryFlagEffect]
     def __init__(self, send_time: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]] = ..., action_name: _Optional[str] = ..., action_id: _Optional[int] = ..., did: _Optional[str] = ..., uri: _Optional[str] = ..., cid: _Optional[str] = ..., data: _Optional[bytes] = ..., labels: _Optional[_Iterable[_Union[AtprotoLabelEffect, _Mapping]]] = ..., tags: _Optional[_Iterable[_Union[AtprotoTagEffect, _Mapping]]] = ..., takedowns: _Optional[_Iterable[_Union[AtprotoTakedownEffect, _Mapping]]] = ..., emails: _Optional[_Iterable[_Union[AtprotoEmailEffect, _Mapping]]] = ..., comments: _Optional[_Iterable[_Union[AtprotoCommentEffect, _Mapping]]] = ..., escalations: _Optional[_Iterable[_Union[AtprotoEscalateEffect, _Mapping]]] = ..., acknowledgements: _Optional[_Iterable[_Union[AtprotoAcknowledgeEffect, _Mapping]]] = ..., reports: _Optional[_Iterable[_Union[AtprotoReportEffect, _Mapping]]] = ..., bigqueryFlags: _Optional[_Iterable[_Union[BigQueryFlagEffect, _Mapping]]] = ...) -> None: ...
+
+class FirehoseEvent(_message.Message):
+    __slots__ = ("did", "timestamp", "kind", "commit", "account", "identity")
+    DID_FIELD_NUMBER: _ClassVar[int]
+    TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
+    KIND_FIELD_NUMBER: _ClassVar[int]
+    COMMIT_FIELD_NUMBER: _ClassVar[int]
+    ACCOUNT_FIELD_NUMBER: _ClassVar[int]
+    IDENTITY_FIELD_NUMBER: _ClassVar[int]
+    did: str
+    timestamp: _timestamp_pb2.Timestamp
+    kind: EventKind
+    commit: Commit
+    account: bytes
+    identity: bytes
+    def __init__(self, did: _Optional[str] = ..., timestamp: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]] = ..., kind: _Optional[_Union[EventKind, str]] = ..., commit: _Optional[_Union[Commit, _Mapping]] = ..., account: _Optional[bytes] = ..., identity: _Optional[bytes] = ...) -> None: ...
+
+class Commit(_message.Message):
+    __slots__ = ("rev", "operation", "collection", "rkey", "record", "cid")
+    REV_FIELD_NUMBER: _ClassVar[int]
+    OPERATION_FIELD_NUMBER: _ClassVar[int]
+    COLLECTION_FIELD_NUMBER: _ClassVar[int]
+    RKEY_FIELD_NUMBER: _ClassVar[int]
+    RECORD_FIELD_NUMBER: _ClassVar[int]
+    CID_FIELD_NUMBER: _ClassVar[int]
+    rev: str
+    operation: CommitOperation
+    collection: str
+    rkey: str
+    record: bytes
+    cid: str
+    def __init__(self, rev: _Optional[str] = ..., operation: _Optional[_Union[CommitOperation, str]] = ..., collection: _Optional[str] = ..., rkey: _Optional[str] = ..., record: _Optional[bytes] = ..., cid: _Optional[str] = ...) -> None: ...
+
+class Cursor(_message.Message):
+    __slots__ = ("sequence", "saved_on_exit")
+    SEQUENCE_FIELD_NUMBER: _ClassVar[int]
+    SAVED_ON_EXIT_FIELD_NUMBER: _ClassVar[int]
+    sequence: int
+    saved_on_exit: bool
+    def __init__(self, sequence: _Optional[int] = ..., saved_on_exit: bool = ...) -> None: ...
+
+class ModerationEnrichedFirehoseRecordEvent(_message.Message):
+    __slots__ = ("did", "timestamp", "collection", "rkey", "operation", "record", "image_results", "ozone_repo_view_detail", "did_doc", "profile_view", "did_audit_log", "cid")
+    class ImageResultsEntry(_message.Message):
+        __slots__ = ("key", "value")
+        KEY_FIELD_NUMBER: _ClassVar[int]
+        VALUE_FIELD_NUMBER: _ClassVar[int]
+        key: str
+        value: ImageDispatchResults
+        def __init__(self, key: _Optional[str] = ..., value: _Optional[_Union[ImageDispatchResults, _Mapping]] = ...) -> None: ...
+    DID_FIELD_NUMBER: _ClassVar[int]
+    TIMESTAMP_FIELD_NUMBER: _ClassVar[int]
+    COLLECTION_FIELD_NUMBER: _ClassVar[int]
+    RKEY_FIELD_NUMBER: _ClassVar[int]
+    OPERATION_FIELD_NUMBER: _ClassVar[int]
+    RECORD_FIELD_NUMBER: _ClassVar[int]
+    IMAGE_RESULTS_FIELD_NUMBER: _ClassVar[int]
+    OZONE_REPO_VIEW_DETAIL_FIELD_NUMBER: _ClassVar[int]
+    DID_DOC_FIELD_NUMBER: _ClassVar[int]
+    PROFILE_VIEW_FIELD_NUMBER: _ClassVar[int]
+    DID_AUDIT_LOG_FIELD_NUMBER: _ClassVar[int]
+    CID_FIELD_NUMBER: _ClassVar[int]
+    did: str
+    timestamp: _timestamp_pb2.Timestamp
+    collection: str
+    rkey: str
+    operation: CommitOperation
+    record: bytes
+    image_results: _containers.MessageMap[str, ImageDispatchResults]
+    ozone_repo_view_detail: bytes
+    did_doc: bytes
+    profile_view: bytes
+    did_audit_log: bytes
+    cid: str
+    def __init__(self, did: _Optional[str] = ..., timestamp: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]] = ..., collection: _Optional[str] = ..., rkey: _Optional[str] = ..., operation: _Optional[_Union[CommitOperation, str]] = ..., record: _Optional[bytes] = ..., image_results: _Optional[_Mapping[str, ImageDispatchResults]] = ..., ozone_repo_view_detail: _Optional[bytes] = ..., did_doc: _Optional[bytes] = ..., profile_view: _Optional[bytes] = ..., did_audit_log: _Optional[bytes] = ..., cid: _Optional[str] = ...) -> None: ...
+
+class ImageDispatchResults(_message.Message):
+    __slots__ = ("cid", "abyss", "hive", "retina", "prescreen")
+    class AbyssResults(_message.Message):
+        __slots__ = ("raw", "error", "is_abuse_match")
+        RAW_FIELD_NUMBER: _ClassVar[int]
+        ERROR_FIELD_NUMBER: _ClassVar[int]
+        IS_ABUSE_MATCH_FIELD_NUMBER: _ClassVar[int]
+        raw: bytes
+        error: str
+        is_abuse_match: bool
+        def __init__(self, raw: _Optional[bytes] = ..., error: _Optional[str] = ..., is_abuse_match: bool = ...) -> None: ...
+    class HiveResults(_message.Message):
+        __slots__ = ("raw", "error", "classes")
+        class ClassesEntry(_message.Message):
+            __slots__ = ("key", "value")
+            KEY_FIELD_NUMBER: _ClassVar[int]
+            VALUE_FIELD_NUMBER: _ClassVar[int]
+            key: str
+            value: float
+            def __init__(self, key: _Optional[str] = ..., value: _Optional[float] = ...) -> None: ...
+        RAW_FIELD_NUMBER: _ClassVar[int]
+        ERROR_FIELD_NUMBER: _ClassVar[int]
+        CLASSES_FIELD_NUMBER: _ClassVar[int]
+        raw: bytes
+        error: str
+        classes: _containers.ScalarMap[str, float]
+        def __init__(self, raw: _Optional[bytes] = ..., error: _Optional[str] = ..., classes: _Optional[_Mapping[str, float]] = ...) -> None: ...
+    class RetinaResults(_message.Message):
+        __slots__ = ("raw", "error", "text")
+        RAW_FIELD_NUMBER: _ClassVar[int]
+        ERROR_FIELD_NUMBER: _ClassVar[int]
+        TEXT_FIELD_NUMBER: _ClassVar[int]
+        raw: bytes
+        error: str
+        text: str
+        def __init__(self, raw: _Optional[bytes] = ..., error: _Optional[str] = ..., text: _Optional[str] = ...) -> None: ...
+    class PrescreenResults(_message.Message):
+        __slots__ = ("raw", "error", "decision")
+        RAW_FIELD_NUMBER: _ClassVar[int]
+        ERROR_FIELD_NUMBER: _ClassVar[int]
+        DECISION_FIELD_NUMBER: _ClassVar[int]
+        raw: bytes
+        error: str
+        decision: str
+        def __init__(self, raw: _Optional[bytes] = ..., error: _Optional[str] = ..., decision: _Optional[str] = ...) -> None: ...
+    CID_FIELD_NUMBER: _ClassVar[int]
+    ABYSS_FIELD_NUMBER: _ClassVar[int]
+    HIVE_FIELD_NUMBER: _ClassVar[int]
+    RETINA_FIELD_NUMBER: _ClassVar[int]
+    PRESCREEN_FIELD_NUMBER: _ClassVar[int]
+    cid: str
+    abyss: ImageDispatchResults.AbyssResults
+    hive: ImageDispatchResults.HiveResults
+    retina: ImageDispatchResults.RetinaResults
+    prescreen: ImageDispatchResults.PrescreenResults
+    def __init__(self, cid: _Optional[str] = ..., abyss: _Optional[_Union[ImageDispatchResults.AbyssResults, _Mapping]] = ..., hive: _Optional[_Union[ImageDispatchResults.HiveResults, _Mapping]] = ..., retina: _Optional[_Union[ImageDispatchResults.RetinaResults, _Mapping]] = ..., prescreen: _Optional[_Union[ImageDispatchResults.PrescreenResults, _Mapping]] = ...) -> None: ...
