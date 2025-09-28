@@ -23,6 +23,7 @@ class AtprotoLabel(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     ATPROTO_LABEL_WARN: _ClassVar[AtprotoLabel]
     ATPROTO_LABEL_HIDE: _ClassVar[AtprotoLabel]
     ATPROTO_LABEL_NEEDS_REVIEW: _ClassVar[AtprotoLabel]
+    ATPROTO_LABEL_MISLEADING: _ClassVar[AtprotoLabel]
 
 class AtprotoEffectKind(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
@@ -82,6 +83,7 @@ ATPROTO_LABEL_SEXUAL: AtprotoLabel
 ATPROTO_LABEL_WARN: AtprotoLabel
 ATPROTO_LABEL_HIDE: AtprotoLabel
 ATPROTO_LABEL_NEEDS_REVIEW: AtprotoLabel
+ATPROTO_LABEL_MISLEADING: AtprotoLabel
 ATPROTO_EFFECT_KIND_NONE: AtprotoEffectKind
 ATPROTO_EFFECT_KIND_ADD: AtprotoEffectKind
 ATPROTO_EFFECT_KIND_REMOVE: AtprotoEffectKind

@@ -9,13 +9,12 @@
 package osprey
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -85,6 +84,7 @@ const (
 	AtprotoLabel_ATPROTO_LABEL_WARN         AtprotoLabel = 5
 	AtprotoLabel_ATPROTO_LABEL_HIDE         AtprotoLabel = 6
 	AtprotoLabel_ATPROTO_LABEL_NEEDS_REVIEW AtprotoLabel = 7
+	AtprotoLabel_ATPROTO_LABEL_MISLEADING   AtprotoLabel = 8
 )
 
 // Enum value maps for AtprotoLabel.
@@ -98,6 +98,7 @@ var (
 		5: "ATPROTO_LABEL_WARN",
 		6: "ATPROTO_LABEL_HIDE",
 		7: "ATPROTO_LABEL_NEEDS_REVIEW",
+		8: "ATPROTO_LABEL_MISLEADING",
 	}
 	AtprotoLabel_value = map[string]int32{
 		"ATPROTO_LABEL_NONE":         0,
@@ -108,6 +109,7 @@ var (
 		"ATPROTO_LABEL_WARN":         5,
 		"ATPROTO_LABEL_HIDE":         6,
 		"ATPROTO_LABEL_NEEDS_REVIEW": 7,
+		"ATPROTO_LABEL_MISLEADING":   8,
 	}
 )
 
@@ -2225,7 +2227,7 @@ const file_osprey_atproto_proto_rawDesc = "" +
 	"\x12AtprotoSubjectKind\x12\x1d\n" +
 	"\x19ATPROTO_SUBJECT_KIND_NONE\x10\x00\x12\x1e\n" +
 	"\x1aATPROTO_SUBJECT_KIND_ACTOR\x10\x01\x12\x1f\n" +
-	"\x1bATPROTO_SUBJECT_KIND_RECORD\x10\x02*\xd8\x01\n" +
+	"\x1bATPROTO_SUBJECT_KIND_RECORD\x10\x02*\xf6\x01\n" +
 	"\fAtprotoLabel\x12\x16\n" +
 	"\x12ATPROTO_LABEL_NONE\x10\x00\x12\x16\n" +
 	"\x12ATPROTO_LABEL_SPAM\x10\x01\x12\x16\n" +
@@ -2234,7 +2236,8 @@ const file_osprey_atproto_proto_rawDesc = "" +
 	"\x14ATPROTO_LABEL_SEXUAL\x10\x04\x12\x16\n" +
 	"\x12ATPROTO_LABEL_WARN\x10\x05\x12\x16\n" +
 	"\x12ATPROTO_LABEL_HIDE\x10\x06\x12\x1e\n" +
-	"\x1aATPROTO_LABEL_NEEDS_REVIEW\x10\a*n\n" +
+	"\x1aATPROTO_LABEL_NEEDS_REVIEW\x10\a\x12\x1c\n" +
+	"\x18ATPROTO_LABEL_MISLEADING\x10\b*n\n" +
 	"\x11AtprotoEffectKind\x12\x1c\n" +
 	"\x18ATPROTO_EFFECT_KIND_NONE\x10\x00\x12\x1b\n" +
 	"\x17ATPROTO_EFFECT_KIND_ADD\x10\x01\x12\x1e\n" +

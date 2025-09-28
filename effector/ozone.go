@@ -927,6 +927,8 @@ func AtprotoLabelToString(label osprey.AtprotoLabel) string {
 		return "spam"
 	case osprey.AtprotoLabel_ATPROTO_LABEL_WARN:
 		return "!warn"
+	case osprey.AtprotoLabel_ATPROTO_LABEL_MISLEADING:
+		return "misleading"
 	default:
 		panic(fmt.Sprintf("unexpected osprey.AtprotoLabel: %#v", label))
 	}
