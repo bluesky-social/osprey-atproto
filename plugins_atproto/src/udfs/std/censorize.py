@@ -1663,6 +1663,9 @@ def create_censorize_regex(
     char_set: Dict[str, List[str]],
 ) -> str:
     """Create a regex pattern for matching variations of a token."""
+
+    tok = tok.lower()
+
     regex = ''
     if not include_substrings:
         regex += r'(^|\W)'
@@ -1741,6 +1744,52 @@ def clean(text: str) -> str:
     text = remove_zero_width_space(text)
     text = remove_underlines(text)
     return text
+
+
+class CensorCache:
+    def __init__(self) -> None:
+        self._cache: Dict[str, re.Pattern[str]] = {}
+
+    def get_censorized_regex(self, term: str, plurals: bool, substrings: bool) -> re.Pattern[str]:
+        cache_key = term
+        if plurals:
+            cache_key = f'{cache_key}-yp'
+        if substrings:
+            cache_key = f'{cache_key}-ysbs'
+
+        if cache_key not in self._cache:
+            pattern = regex(term, include_plural=plurals, include_substrings=substrings)
+            self._cache[cache_key] = pattern
+
+        return self._cache[cache_key]
+
+
+censor_cache = CensorCache()
+
+
+class CheckCensorizedArguments(ArgumentsBase):
+    s: str
+    pattern: str
+    plurals: bool = False
+    substrings: bool = False
+    must_be_censorized: bool = False
+
+
+class CheckCensorized(UDFBase[CheckCensorizedArguments, bool]):
+    def execute(self, execution_context: ExecutionContext, arguments: CheckCensorizedArguments) -> bool:
+        pattern = censor_cache.get_censorized_regex(
+            arguments.pattern, plurals=arguments.plurals, substrings=arguments.substrings
+        )
+
+        match = pattern.search(arguments.s)
+        if match is None:
+            return False
+
+        if arguments.must_be_censorized:
+            if match.group().lower() == arguments.pattern.lower():
+                return False
+
+        return True
 
 
 class CleanStringArguments(ArgumentsBase):

@@ -38,7 +38,7 @@ from udfs.std.cache import (
     IncrementWindow,
     cache_client,
 )
-from udfs.std.censorize import CleanString
+from udfs.std.censorize import CheckCensorized, CleanString
 from udfs.std.concat import ConcatStringLists
 from udfs.std.list import CensorizedListMatch, ListContains, RegexListMatch, SimpleListContains
 from udfs.std.log import Log
@@ -73,6 +73,7 @@ def register_udfs():
         GetWindowCount,
         TimestampAge,
         ConcatStringLists,
+        CheckCensorized,
         Log,
         #
         # Atproto std

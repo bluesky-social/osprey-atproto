@@ -1,5 +1,5 @@
 from ddtrace.internal.logger import get_logger
-from prometheus_client import Counter, start_http_server
+from prometheus_client import Counter, Histogram, start_http_server
 
 NAMESPACE = 'osprey_worker'
 
@@ -32,6 +32,14 @@ class WorkerMetrics:
             documentation='Number of events processed by output sink',
         )
 
+        self.events_processed_duration = Histogram(
+            name='events_processed_duration_seconds',
+            namespace=NAMESPACE,
+            labelnames=['status', 'action_type'],
+            buckets=(0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0),
+            documentation='Time taken to process an an event',
+        )
+
         self.producer_produced = Counter(
             name='producer_produced',
             namespace=NAMESPACE,
@@ -57,6 +65,21 @@ class WorkerMetrics:
             namespace=NAMESPACE,
             labelnames=['status'],
             documentation='Number of increments to counters',
+        )
+
+        self.image_vector_inserts = Counter(
+            name='image_vector_inserts',
+            namespace=NAMESPACE,
+            labelnames=['status'],
+            documentation='Number of image vectors inserted into Milvus',
+        )
+
+        self.image_vector_insert_duration = Histogram(
+            name='image_vector_insert_duration_seconds',
+            namespace=NAMESPACE,
+            labelnames=['status'],
+            buckets=(0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0),
+            documentation='Time taken to insert image vectors into Milvus',
         )
 
         self._initialized = True
