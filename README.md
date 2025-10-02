@@ -105,3 +105,7 @@ their own ATProto applications.
 
 We keep our internal ruleset private in an effort to prevent bad actors from circumventing the protections that we currently have in place and
 are continuously adding to the network.
+
+## License 
+
+Bluesky Social PBC has committed to a software patent non-aggression pledge. For details see [the original announcement](https://bsky.social/about/blog/10-01-2025-patent-pledge).
