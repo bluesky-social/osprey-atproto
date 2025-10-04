@@ -1,0 +1,13 @@
+services:
+  retina:
+    build:
+      context: ../..
+      dockerfile: ./cmd/retina/Dockerfile
+    network_mode: host
+    environment:
+      - RETINA_API_LISTEN_ADDR=:8080
+      - RETINA_METRICS_ADDR=:8081
+      - RETINA_DEBUG=false
+      - RETINA_MAX_CONCURRENT_OCR_EXECS=5
+      - RETINA_PDQ_PATH=/usr/bin/pdq-photo-hasher
+    restart: unless-stopped
