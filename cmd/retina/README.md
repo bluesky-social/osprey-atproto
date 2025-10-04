@@ -17,7 +17,147 @@ Retina is a small service that accepts image bytes and returns both OCR content 
 
 ### Running
 
-The included `compose.yaml` should 
+The included `compose.yaml` will run the service with the default environment variables.
+
 ```bash
 docker compose up -d
 ```
+
+If you wish to run this without Docker, you will need to manage cloning Facebook's ThreatExchange repository, building the PDQ image hasher, and update the `RETINA_PDQ_PATH`
+environment variable when you run the service.
+
+### API
+
+The Retina API provides endpoints for extracting text from images using OCR and generating perceptual hashes using PDQ.
+
+#### Endpoints
+
+##### `POST /api/analyze`
+
+Extract text from an image using OCR (Tesseract).
+
+**Request Body:**
+```json
+{
+  "did": "did:plc:...",
+  "cid": "bafyrei..."
+}
+```
+
+**Response:**
+```json
+{
+  "text": "extracted text from image",
+  "error": "error message if any"
+}
+```
+
+**Status Codes:**
+- `200 OK`: Success
+- `400 Bad Request`: Invalid request or image not found
+- `500 Internal Server Error`: Processing error
+
+---
+
+##### `POST /api/analyze_blob`
+
+Extract text from an image blob in the request body using OCR (Tesseract).
+
+**Query Parameters:**
+- `did` (optional): DID of the image owner
+- `cid` (optional): CID of the image
+
+**Headers:**
+- `Content-Type`: Must be `image/jpeg` (only supported MIME type)
+
+**Request Body:** Raw image bytes
+
+**Response:**
+```json
+{
+  "text": "extracted text from image",
+  "error": "error message if any"
+}
+```
+
+**Status Codes:**
+- `200 OK`: Success
+- `415 Unsupported Media Type`: Invalid Content-Type
+- `500 Internal Server Error`: Processing error
+
+---
+
+##### `POST /api/hash`
+
+Generate a PDQ perceptual hash for an image.
+
+**Request Body:**
+```json
+{
+  "did": "did:plc:...",
+  "cid": "bafyrei..."
+}
+```
+
+**Response:**
+```json
+{
+  "hash": "hexadecimal PDQ hash",
+  "binary": "binary representation of hash",
+  "qualityTooLow": false
+}
+```
+
+If image quality is too low for hashing:
+```json
+{
+  "qualityTooLow": true
+}
+```
+
+**Status Codes:**
+- `200 OK`: Success (even when quality is too low)
+- `400 Bad Request`: Invalid request or image not found
+- `500 Internal Server Error`: Processing error
+
+---
+
+##### `POST /api/hash_blob`
+
+Generate a PDQ perceptual hash for an image blob in the request body.
+
+**Query Parameters:**
+- `did` (optional): DID of the image owner
+- `cid` (optional): CID of the image
+
+**Request Body:** Raw image bytes
+
+**Response:**
+```json
+{
+  "hash": "hexadecimal PDQ hash",
+  "binary": "binary representation of hash",
+  "qualityTooLow": false
+}
+```
+
+If image quality is too low for hashing:
+```json
+{
+  "qualityTooLow": true
+}
+```
+
+**Status Codes:**
+- `200 OK`: Success (even when quality is too low)
+- `500 Internal Server Error`: Processing error
+
+---
+
+##### `GET /_health`
+
+Health check endpoint.
+
+**Response:** `healthy` (200 OK)
+
+
