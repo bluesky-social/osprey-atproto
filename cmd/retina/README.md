@@ -1,6 +1,19 @@
 # Retina - Image OCR and Perceptual Hash Generator
 
-Retina is a small service that accepts image bytes and returns both OCR content (using Tesseract) and a perceptual hash using Facebook's PDQ algorithim.
+Retina is a small service that accepts image bytes and returns both OCR content (using Tesseract) and a perceptual hash using Facebook's PDQ algorithm.
+
+
+### Tesseract OCR
+
+[Tesseract](https://github.com/tesseract-ocr/tesseract) is an open-source OCR engine originally developed by HP and now maintained by Google. It can extract text from images in over 100 languages.
+
+**Documentation:** https://tesseract-ocr.github.io/
+
+### PDQ (Perceptual Distance Quality)
+
+[PDQ](https://github.com/facebook/ThreatExchange/tree/main/pdq) is a perceptual hashing algorithm developed by Facebook for image similarity detection. It generates a compact hash that remains similar even when images are slightly modified (resized, compressed, color-adjusted, etc.), making it useful for detecting duplicate or near-duplicate images.
+
+**Documentation:** https://github.com/facebook/ThreatExchange/blob/main/pdq/README.md
 
 ## Usage
 
