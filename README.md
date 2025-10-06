@@ -79,12 +79,12 @@ Once you have set up your Osprey repo with this repo as a submodule, you should 
 writing rules, see `rules_atproto/README.md`. For information about writing UDFs, see `plugins_atproto/README.md`.
 
 Additional information on making changes to Osprey can be found [in the Osprey repo](https://github.com/roostorg/osprey/blob/main/docs/DEVELOPMENT.md). For
-more information about writing rules and how they work, see [the README in the Osprey repo](https://github.com/roostorg/osprey/blob/main/docs/rules.md), or
+more information about writing rules and how they work, see [the README in the Osprey repo](https://github.com/roostorg/osprey/blob/main/docs/rules.md).
 
 
 ## FAQ
 
-As we field more questsion from the community, we will update this FAQ section. For now, here are the things we expect people to ask the most.
+As we field more questions from the community, we will update this FAQ section. For now, here are the things we expect people to ask the most.
 
 ### What is Osprey?
 
