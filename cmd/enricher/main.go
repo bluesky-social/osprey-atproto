@@ -50,6 +50,11 @@ func main() {
 				EnvVars: []string{"OUTPUT_KAFKA_TOPIC"},
 			},
 			&cli.StringFlag{
+				Name:    "image-cdn-url",
+				Usage:   "URL for the CDN",
+				EnvVars: []string{"IMAGE_CDN_URL"},
+			},
+			&cli.StringFlag{
 				Name:    "abyss-url",
 				Usage:   "URL for the Abyss service including scheme",
 				EnvVars: []string{"ABYSS_URL"},
@@ -117,6 +122,7 @@ func main() {
 				SASLPassword:           cmd.String("sasl-password"),
 				InputTopic:             cmd.String("input-topic"),
 				OutputTopic:            cmd.String("output-topic"),
+				ImageCdnURL:            cmd.String("image-cdn-url"),
 				AbyssURL:               cmd.String("abyss-url"),
 				AbyssAdminPassword:     cmd.String("abyss-admin-password"),
 				HiveAPIToken:           cmd.String("hive-api-token"),
