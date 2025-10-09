@@ -21,22 +21,24 @@ import (
 	"github.com/bluesky-social/osprey-atproto/enricher/hive"
 	"github.com/bluesky-social/osprey-atproto/enricher/ozone"
 	"github.com/bluesky-social/osprey-atproto/enricher/prescreen"
-	"github.com/bluesky-social/osprey-atproto/enricher/retina"
+	retinahash "github.com/bluesky-social/osprey-atproto/enricher/retina-hash"
+	retinaocr "github.com/bluesky-social/osprey-atproto/enricher/retina-ocr"
 	osprey "github.com/bluesky-social/osprey-atproto/proto/go"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Enricher struct {
-	logger          *slog.Logger
-	producer        *producer.Producer[*osprey.OspreyInputEvent]
-	consumer        *consumer.Consumer[*osprey.FirehoseEvent]
-	abyssClient     *abyss.Client
-	hiveClient      *hive.Client
-	retinaClient    *retina.Client
-	prescreenClient *prescreen.Client
-	ozoneClient     *ozone.Client
-	appviewClient   *appview.Client
-	didClient       *did.Client
+	logger           *slog.Logger
+	producer         *producer.Producer[*osprey.OspreyInputEvent]
+	consumer         *consumer.Consumer[*osprey.FirehoseEvent]
+	abyssClient      *abyss.Client
+	hiveClient       *hive.Client
+	retinaOcrClient  *retinaocr.Client
+	retinaHashClient *retinahash.Client
+	prescreenClient  *prescreen.Client
+	ozoneClient      *ozone.Client
+	appviewClient    *appview.Client
+	didClient        *did.Client
 }
 
 type Args struct {
@@ -48,8 +50,8 @@ type Args struct {
 	AbyssURL               string
 	AbyssAdminPassword     string
 	HiveAPIToken           string
-	RetinaURL              string
-	RetinaAPIKey           string
+	RetinaOcrURL           string
+	RetinaHashURL          string
 	PrescreenHost          string
 	OzoneHost              string
 	OzoneAdminToken        string
@@ -79,10 +81,15 @@ func New(ctx context.Context, args *Args) (*Enricher, error) {
 		en.hiveClient = hiveClient
 		logger.Info("initialized Hive client")
 	}
-	if args.RetinaURL != "" && args.RetinaAPIKey != "" {
-		retinaClient := retina.NewRetinaClient(args.RetinaURL, args.RetinaAPIKey)
-		en.retinaClient = retinaClient
-		logger.Info("initialized Retina client", "url", args.RetinaURL)
+	if args.RetinaOcrURL != "" {
+		client := retinaocr.NewClient(args.RetinaOcrURL)
+		en.retinaOcrClient = client
+		logger.Info("initialized Retina OCR client", "url", args.RetinaOcrURL)
+	}
+	if args.RetinaHashURL != "" {
+		client := retinahash.NewClient(args.RetinaHashURL)
+		en.retinaHashClient = client
+		logger.Info("initialized Retina Hash client", "url", args.RetinaHashURL)
 	}
 	if args.PrescreenHost != "" {
 		prescreenClient := prescreen.NewClient(args.PrescreenHost)
@@ -239,9 +246,7 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 
 	// Dispatch to Ozone for RepoViewDetail
 	if en.ozoneClient != nil {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 
 			logger := logger.With("processor", "ozone")
 
@@ -259,14 +264,12 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 
 			ozoneRepoViewDetail = respBody
 			logger.Info("successfully fetched RepoViewDetail from Ozone")
-		}()
+		})
 	}
 
 	// Dispatch to AppView for ProfileView
 	if en.appviewClient != nil {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 
 			logger := logger.With("processor", "appview")
 
@@ -284,14 +287,12 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 
 			profileView = respBody
 			logger.Info("successfully fetched ProfileView from AppView")
-		}()
+		})
 	}
 
 	// Dispatch to DID Resolver for DID Doc
 	if en.didClient != nil {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 
 			logger := logger.With("processor", "did")
 
@@ -309,13 +310,11 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 
 			didDoc = respBody
 			logger.Info("successfully fetched DID Document from DID resolver")
-		}()
+		})
 
 		// Lookup the Audit Log for DID:PLC DIDs to get DID creation time.
 		if strings.HasPrefix(event.Did, "did:plc:") {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
+			wg.Go(func() {
 
 				logger := logger.With("processor", "did-audit")
 
@@ -337,7 +336,7 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 
 				didAuditLog = respBody
 				logger.Info("successfully fetched DID audit log from DID resolver")
-			}()
+			})
 		}
 	}
 
@@ -347,99 +346,99 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 	// Need to add that image download logic
 
 	// Dispatch images to enabled enrichers.
-	// for _, img := range event.Images {
-	// 	wg.Add(1)
-	// 	go func(img *osprey.RecordImageBatchEvent_Image) {
-	// 		defer wg.Done()
-	//
-	// 		// Send to the prescreen service first, if we get back "true", send to Hive
-	// 		if en.prescreenClient != nil {
-	// 			logger := logger.With("processor", "prescreen", "image_cid", img.Cid)
-	// 			logger.Info("dispatching image to prescreen")
-	// 			decision, res, err := en.prescreenClient.Scan(dispatchCtx, event.Did, img.Data)
-	// 			if err != nil {
-	// 				logger.Error("failed to scan image with prescreen", "err", err)
-	// 				prescreenResults.Store(img.Cid, &osprey.ImageDispatchResults_PrescreenResults{
-	// 					Error: asProtoErr(err),
-	// 				})
-	// 				return
-	// 			}
-	// 			logger.Info("prescreen scan successful", "decision", decision)
-	//
-	// 			prescreenResults.Store(img.Cid, &osprey.ImageDispatchResults_PrescreenResults{
-	// 				Raw:      res,
-	// 				Decision: &decision,
-	// 			})
-	//
-	// 			if decision == "sfw" {
-	// 				return
-	// 			}
-	// 		}
-	//
-	// 		// If prescreen flags as NSFW, forward to Hive for more detailed analysis.
-	// 		if en.hiveClient != nil {
-	// 			logger := logger.With("processor", "hive", "image_cid", img.Cid)
-	// 			logger.Info("dispatching image")
-	// 			res, classes, err := en.hiveClient.Scan(dispatchCtx, img.Data)
-	// 			if err != nil {
-	// 				logger.Error("failed to scan image", "err", err)
-	// 				hiveResults.Store(img.Cid, &osprey.ImageDispatchResults_HiveResults{
-	// 					Error: asProtoErr(err),
-	// 				})
-	// 				return
-	// 			}
-	// 			logger.Info("scan successful")
-	// 			hiveResults.Store(img.Cid, &osprey.ImageDispatchResults_HiveResults{
-	// 				Raw:     res,
-	// 				Classes: classes,
-	// 			})
-	// 		}
-	// 	}(img)
-	//
-	// 	if en.abyssClient != nil {
-	// 		wg.Add(1)
-	// 		go func(img *osprey.RecordImageBatchEvent_Image) {
-	// 			defer wg.Done()
-	// 			logger := logger.With("processor", "abyss", "image_cid", img.Cid)
-	// 			logger.Info("dispatching image")
-	// 			res, isAbuseMatch, err := en.abyssClient.Scan(dispatchCtx, event.Did, img.Data)
-	// 			if err != nil {
-	// 				logger.Error("failed to scan image", "err", err)
-	// 				abyssResults.Store(img.Cid, &osprey.ImageDispatchResults_AbyssResults{
-	// 					Error: asProtoErr(err),
-	// 				})
-	// 				return
-	// 			}
-	// 			logger.Info("scan successful")
-	// 			abyssResults.Store(img.Cid, &osprey.ImageDispatchResults_AbyssResults{
-	// 				Raw:          res,
-	// 				IsAbuseMatch: &isAbuseMatch,
-	// 			})
-	// 		}(img)
-	// 	}
-	//
-	// 	if en.retinaClient != nil {
-	// 		wg.Add(1)
-	// 		go func(img *osprey.RecordImageBatchEvent_Image) {
-	// 			defer wg.Done()
-	// 			logger := logger.With("processor", "retina", "image_cid", img.Cid)
-	// 			logger.Info("dispatching image")
-	// 			res, ocrText, err := en.retinaClient.Scan(dispatchCtx, event.Did, img.Cid, img.Data)
-	// 			if err != nil {
-	// 				logger.Error("failed to scan image", "err", err)
-	// 				retinaResults.Store(img.Cid, &osprey.ImageDispatchResults_RetinaResults{
-	// 					Error: asProtoErr(err),
-	// 				})
-	// 				return
-	// 			}
-	// 			logger.Info("scan successful")
-	// 			retinaResults.Store(img.Cid, &osprey.ImageDispatchResults_RetinaResults{
-	// 				Raw:  res,
-	// 				Text: &ocrText,
-	// 			})
-	// 		}(img)
-	// 	}
-	// }
+	for _, img := range event.Images {
+		wg.Add(1)
+		go func(img *osprey.RecordImageBatchEvent_Image) {
+			defer wg.Done()
+
+			// Send to the prescreen service first, if we get back "true", send to Hive
+			if en.prescreenClient != nil {
+				logger := logger.With("processor", "prescreen", "image_cid", img.Cid)
+				logger.Info("dispatching image to prescreen")
+				decision, res, err := en.prescreenClient.Scan(dispatchCtx, event.Did, img.Data)
+				if err != nil {
+					logger.Error("failed to scan image with prescreen", "err", err)
+					prescreenResults.Store(img.Cid, &osprey.ImageDispatchResults_PrescreenResults{
+						Error: asProtoErr(err),
+					})
+					return
+				}
+				logger.Info("prescreen scan successful", "decision", decision)
+
+				prescreenResults.Store(img.Cid, &osprey.ImageDispatchResults_PrescreenResults{
+					Raw:      res,
+					Decision: &decision,
+				})
+
+				if decision == "sfw" {
+					return
+				}
+			}
+
+			// If prescreen flags as NSFW, forward to Hive for more detailed analysis.
+			if en.hiveClient != nil {
+				logger := logger.With("processor", "hive", "image_cid", img.Cid)
+				logger.Info("dispatching image")
+				res, classes, err := en.hiveClient.Scan(dispatchCtx, img.Data)
+				if err != nil {
+					logger.Error("failed to scan image", "err", err)
+					hiveResults.Store(img.Cid, &osprey.ImageDispatchResults_HiveResults{
+						Error: asProtoErr(err),
+					})
+					return
+				}
+				logger.Info("scan successful")
+				hiveResults.Store(img.Cid, &osprey.ImageDispatchResults_HiveResults{
+					Raw:     res,
+					Classes: classes,
+				})
+			}
+		}(img)
+
+		if en.abyssClient != nil {
+			wg.Add(1)
+			go func(img *osprey.RecordImageBatchEvent_Image) {
+				defer wg.Done()
+				logger := logger.With("processor", "abyss", "image_cid", img.Cid)
+				logger.Info("dispatching image")
+				res, isAbuseMatch, err := en.abyssClient.Scan(dispatchCtx, event.Did, img.Data)
+				if err != nil {
+					logger.Error("failed to scan image", "err", err)
+					abyssResults.Store(img.Cid, &osprey.ImageDispatchResults_AbyssResults{
+						Error: asProtoErr(err),
+					})
+					return
+				}
+				logger.Info("scan successful")
+				abyssResults.Store(img.Cid, &osprey.ImageDispatchResults_AbyssResults{
+					Raw:          res,
+					IsAbuseMatch: &isAbuseMatch,
+				})
+			}(img)
+		}
+
+		if en.retinaClient != nil {
+			wg.Add(1)
+			go func(img *osprey.RecordImageBatchEvent_Image) {
+				defer wg.Done()
+				logger := logger.With("processor", "retina", "image_cid", img.Cid)
+				logger.Info("dispatching image")
+				res, ocrText, err := en.retinaClient.Scan(dispatchCtx, event.Did, img.Cid, img.Data)
+				if err != nil {
+					logger.Error("failed to scan image", "err", err)
+					retinaResults.Store(img.Cid, &osprey.ImageDispatchResults_RetinaResults{
+						Error: asProtoErr(err),
+					})
+					return
+				}
+				logger.Info("scan successful")
+				retinaResults.Store(img.Cid, &osprey.ImageDispatchResults_RetinaResults{
+					Raw:  res,
+					Text: &ocrText,
+				})
+			}(img)
+		}
+	}
 
 	wg.Wait()
 
