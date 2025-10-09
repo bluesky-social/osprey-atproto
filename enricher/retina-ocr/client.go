@@ -1,4 +1,4 @@
-package retina
+package retinaocr
 
 import (
 	"bytes"
@@ -18,7 +18,7 @@ import (
 	"golang.org/x/time/rate"
 )
 
-const service = "retina"
+const service = "retina-ocr"
 
 var tracer = otel.Tracer(service)
 
@@ -29,13 +29,12 @@ type Client struct {
 	Limiter *rate.Limiter
 }
 
-func NewRetinaClient(host, apiKey string) *Client {
+func NewClient(host string) *Client {
 	// disable keepalives and idle conns to more evenly distribute load across retina instances
 	c := robusthttp.NewClient(robusthttp.WithTransport(cleanhttp.DefaultTransport()))
 	return &Client{
 		Client:  c,
 		Host:    host,
-		APIKey:  apiKey,
 		Limiter: rate.NewLimiter(100, 10),
 	}
 }

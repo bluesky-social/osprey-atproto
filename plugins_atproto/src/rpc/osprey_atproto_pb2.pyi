@@ -373,7 +373,7 @@ class ModerationEnrichedFirehoseRecordEvent(_message.Message):
     def __init__(self, did: _Optional[str] = ..., timestamp: _Optional[_Union[_timestamp_pb2.Timestamp, _Mapping]] = ..., collection: _Optional[str] = ..., rkey: _Optional[str] = ..., operation: _Optional[_Union[CommitOperation, str]] = ..., record: _Optional[bytes] = ..., image_results: _Optional[_Mapping[str, ImageDispatchResults]] = ..., ozone_repo_view_detail: _Optional[bytes] = ..., did_doc: _Optional[bytes] = ..., profile_view: _Optional[bytes] = ..., did_audit_log: _Optional[bytes] = ..., cid: _Optional[str] = ...) -> None: ...
 
 class ImageDispatchResults(_message.Message):
-    __slots__ = ("cid", "abyss", "hive", "retina", "prescreen")
+    __slots__ = ("cid", "abyss", "hive", "retina", "prescreen", "retina_hash")
     class AbyssResults(_message.Message):
         __slots__ = ("raw", "error", "is_abuse_match")
         RAW_FIELD_NUMBER: _ClassVar[int]
@@ -408,6 +408,17 @@ class ImageDispatchResults(_message.Message):
         error: str
         text: str
         def __init__(self, raw: _Optional[bytes] = ..., error: _Optional[str] = ..., text: _Optional[str] = ...) -> None: ...
+    class RetinaHashResults(_message.Message):
+        __slots__ = ("raw", "error", "hash", "quality_too_low")
+        RAW_FIELD_NUMBER: _ClassVar[int]
+        ERROR_FIELD_NUMBER: _ClassVar[int]
+        HASH_FIELD_NUMBER: _ClassVar[int]
+        QUALITY_TOO_LOW_FIELD_NUMBER: _ClassVar[int]
+        raw: bytes
+        error: str
+        hash: str
+        quality_too_low: bool
+        def __init__(self, raw: _Optional[bytes] = ..., error: _Optional[str] = ..., hash: _Optional[str] = ..., quality_too_low: bool = ...) -> None: ...
     class PrescreenResults(_message.Message):
         __slots__ = ("raw", "error", "decision")
         RAW_FIELD_NUMBER: _ClassVar[int]
@@ -422,9 +433,11 @@ class ImageDispatchResults(_message.Message):
     HIVE_FIELD_NUMBER: _ClassVar[int]
     RETINA_FIELD_NUMBER: _ClassVar[int]
     PRESCREEN_FIELD_NUMBER: _ClassVar[int]
+    RETINA_HASH_FIELD_NUMBER: _ClassVar[int]
     cid: str
     abyss: ImageDispatchResults.AbyssResults
     hive: ImageDispatchResults.HiveResults
     retina: ImageDispatchResults.RetinaResults
     prescreen: ImageDispatchResults.PrescreenResults
-    def __init__(self, cid: _Optional[str] = ..., abyss: _Optional[_Union[ImageDispatchResults.AbyssResults, _Mapping]] = ..., hive: _Optional[_Union[ImageDispatchResults.HiveResults, _Mapping]] = ..., retina: _Optional[_Union[ImageDispatchResults.RetinaResults, _Mapping]] = ..., prescreen: _Optional[_Union[ImageDispatchResults.PrescreenResults, _Mapping]] = ...) -> None: ...
+    retina_hash: ImageDispatchResults.RetinaHashResults
+    def __init__(self, cid: _Optional[str] = ..., abyss: _Optional[_Union[ImageDispatchResults.AbyssResults, _Mapping]] = ..., hive: _Optional[_Union[ImageDispatchResults.HiveResults, _Mapping]] = ..., retina: _Optional[_Union[ImageDispatchResults.RetinaResults, _Mapping]] = ..., prescreen: _Optional[_Union[ImageDispatchResults.PrescreenResults, _Mapping]] = ..., retina_hash: _Optional[_Union[ImageDispatchResults.RetinaHashResults, _Mapping]] = ...) -> None: ...

@@ -23,24 +23,26 @@ import (
 	"github.com/bluesky-social/osprey-atproto/enricher/hive"
 	"github.com/bluesky-social/osprey-atproto/enricher/ozone"
 	"github.com/bluesky-social/osprey-atproto/enricher/prescreen"
-	"github.com/bluesky-social/osprey-atproto/enricher/retina"
+	retinahash "github.com/bluesky-social/osprey-atproto/enricher/retina-hash"
+	retinaocr "github.com/bluesky-social/osprey-atproto/enricher/retina-ocr"
 	osprey "github.com/bluesky-social/osprey-atproto/proto/go"
 	"github.com/puzpuzpuz/xsync/v3"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Enricher struct {
-	logger          *slog.Logger
-	producer        *producer.Producer[*osprey.OspreyInputEvent]
-	consumer        *consumer.Consumer[*osprey.FirehoseEvent]
-	cdn             *cdn.Client
-	abyssClient     *abyss.Client
-	hiveClient      *hive.Client
-	retinaClient    *retina.Client
-	prescreenClient *prescreen.Client
-	ozoneClient     *ozone.Client
-	appviewClient   *appview.Client
-	didClient       *did.Client
+	logger           *slog.Logger
+	producer         *producer.Producer[*osprey.OspreyInputEvent]
+	consumer         *consumer.Consumer[*osprey.FirehoseEvent]
+	cdn              *cdn.Client
+	abyssClient      *abyss.Client
+	hiveClient       *hive.Client
+	retinaOcrClient  *retinaocr.Client
+	retinaHashClient *retinahash.Client
+	prescreenClient  *prescreen.Client
+	ozoneClient      *ozone.Client
+	appviewClient    *appview.Client
+	didClient        *did.Client
 }
 
 type Args struct {
@@ -53,8 +55,8 @@ type Args struct {
 	AbyssURL               string
 	AbyssAdminPassword     string
 	HiveAPIToken           string
-	RetinaURL              string
-	RetinaAPIKey           string
+	RetinaOcrURL           string
+	RetinaHashURL          string
 	PrescreenHost          string
 	OzoneHost              string
 	OzoneAdminToken        string
@@ -91,10 +93,15 @@ func New(ctx context.Context, args *Args) (*Enricher, error) {
 		en.hiveClient = hiveClient
 		logger.Info("initialized Hive client")
 	}
-	if args.RetinaURL != "" && args.RetinaAPIKey != "" {
-		retinaClient := retina.NewRetinaClient(args.RetinaURL, args.RetinaAPIKey)
-		en.retinaClient = retinaClient
-		logger.Info("initialized Retina client", "url", args.RetinaURL)
+	if args.RetinaOcrURL != "" {
+		client := retinaocr.NewClient(args.RetinaOcrURL)
+		en.retinaOcrClient = client
+		logger.Info("initialized Retina OCR client", "url", args.RetinaOcrURL)
+	}
+	if args.RetinaHashURL != "" {
+		client := retinahash.NewClient(args.RetinaHashURL)
+		en.retinaHashClient = client
+		logger.Info("initialized Retina Hash client", "url", args.RetinaHashURL)
 	}
 	if args.PrescreenHost != "" {
 		prescreenClient := prescreen.NewClient(args.PrescreenHost)
@@ -237,7 +244,8 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 	wg := &sync.WaitGroup{}
 	hiveResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_HiveResults]()
 	abyssResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_AbyssResults]()
-	retinaResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_RetinaResults]()
+	retinaOcrResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_RetinaResults]()
+	retinaHashResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_RetinaHashResults]()
 	prescreenResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_PrescreenResults]()
 	var ozoneRepoViewDetail []byte
 	var profileView []byte
@@ -341,8 +349,7 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 		}
 	}
 
-	// Download all of the blobs for the record while fetching other information
-
+	// Download all the images while other things are processing
 	rec, err := data.UnmarshalJSON(event.Commit.Record)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal commit record: %w", err)
@@ -454,24 +461,47 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 			}(img)
 		}
 
-		if en.retinaClient != nil {
+		if en.retinaOcrClient != nil {
 			wg.Add(1)
 			go func(img []byte) {
 				defer wg.Done()
-				logger := logger.With("processor", "retina", "image_cid", cid)
+				logger := logger.With("processor", "retina_ocr", "image_cid", cid)
 				logger.Info("dispatching image")
-				res, ocrText, err := en.retinaClient.Scan(dispatchCtx, event.Did, cid, img)
+				res, ocrText, err := en.retinaOcrClient.Scan(dispatchCtx, event.Did, cid, img)
 				if err != nil {
 					logger.Error("failed to scan image", "err", err)
-					retinaResults.Store(cid, &osprey.ImageDispatchResults_RetinaResults{
+					retinaOcrResults.Store(cid, &osprey.ImageDispatchResults_RetinaResults{
 						Error: asProtoErr(err),
 					})
 					return
 				}
 				logger.Info("scan successful")
-				retinaResults.Store(cid, &osprey.ImageDispatchResults_RetinaResults{
+				retinaOcrResults.Store(cid, &osprey.ImageDispatchResults_RetinaResults{
 					Raw:  res,
 					Text: &ocrText,
+				})
+			}(img)
+		}
+
+		if en.retinaHashClient != nil {
+			wg.Add(1)
+			go func(img []byte) {
+				defer wg.Done()
+				logger := logger.With("processor", "retina_hash", "image_cid", cid)
+				logger.Info("dispatching image")
+				res, resObj, err := en.retinaHashClient.Hash(dispatchCtx, event.Did, cid, img)
+				if err != nil {
+					logger.Error("failed to get image hash", "err", err)
+					retinaHashResults.Store(cid, &osprey.ImageDispatchResults_RetinaHashResults{
+						Error: asProtoErr(err),
+					})
+					return
+				}
+				logger.Info("hash successful")
+				retinaHashResults.Store(cid, &osprey.ImageDispatchResults_RetinaHashResults{
+					Raw:           res,
+					Hash:          &resObj.Hash,
+					QualityTooLow: &resObj.QualityTooLow,
 				})
 			}(img)
 		}
@@ -488,7 +518,8 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 		result := &osprey.ImageDispatchResults{Cid: cid}
 		result.Hive, _ = hiveResults.Load(cid)
 		result.Abyss, _ = abyssResults.Load(cid)
-		result.Retina, _ = retinaResults.Load(cid)
+		result.Retina, _ = retinaOcrResults.Load(cid)
+		result.RetinaHash, _ = retinaHashResults.Load(cid)
 		result.Prescreen, _ = prescreenResults.Load(cid)
 		imageResults[cid] = result
 		return true
