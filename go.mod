@@ -5,7 +5,7 @@ go 1.25.1
 require (
 	cloud.google.com/go/bigquery v1.70.0
 	github.com/bluesky-social/go-util v0.0.0-20250911184242-2bd2bc840175
-	github.com/bluesky-social/indigo v0.0.0-20250909204019-c5eaa30f683f
+	github.com/bluesky-social/indigo v0.0.0-20251009212240-20524de167fe
 	github.com/bradfitz/gomemcache v0.0.0-20250403215159-8d39553ac7cf
 	github.com/carlmjohnson/versioninfo v0.22.5
 	github.com/golang-jwt/jwt/v5 v5.3.0
@@ -16,6 +16,7 @@ require (
 	github.com/labstack/echo-contrib v0.15.0
 	github.com/labstack/echo/v4 v4.11.3
 	github.com/prometheus/client_golang v1.23.2
+	github.com/puzpuzpuz/xsync/v3 v3.5.1
 	github.com/samber/slog-echo v1.8.0
 	github.com/urfave/cli/v2 v2.27.7
 	go.opentelemetry.io/otel v1.37.0
@@ -102,7 +103,6 @@ require (
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.66.1 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
-	github.com/puzpuzpuz/xsync/v3 v3.5.1 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/samber/lo v1.38.1 // indirect
