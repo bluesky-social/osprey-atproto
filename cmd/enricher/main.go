@@ -109,11 +109,6 @@ func main() {
 				EnvVars: []string{"MILVUS_HOST"},
 			},
 			&cli.StringFlag{
-				Name:    "image-vector-collection",
-				Usage:   "Milvus collection that image vectors are stored in",
-				EnvVars: []string{"IMAGE_VECTOR_COLLECTION"},
-			},
-			&cli.StringFlag{
 				Name:    "ncii-vector-collection",
 				Usage:   "Milvus collection that Stop-NCII hashes are stored in",
 				EnvVars: []string{"NCII_VECTOR_COLLECTION"},
@@ -159,7 +154,6 @@ func main() {
 				AppviewRatelimitBypass:  cmd.String("appview-ratelimit-bypass"),
 				PLCHost:                 cmd.String("plc-host"),
 				MilvusHost:              cmd.String("milvus-host"),
-				ImageVectorCollection:   cmd.String("image-vector-collection"),
 				NciiCollection:          cmd.String("ncii-vector-collection"),
 				NciiMinDistance:         cmd.Float64("ncii-min-distance"),
 				FlaggedImageCollection:  cmd.String("flagged-image-collection"),

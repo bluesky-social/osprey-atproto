@@ -71,7 +71,6 @@ type Args struct {
 	AppviewRatelimitBypass  string
 	PLCHost                 string
 	MilvusHost              string
-	ImageVectorCollection   string
 	NciiCollection          string
 	NciiMinDistance         float64
 	FlaggedImageCollection  string
@@ -145,11 +144,6 @@ func New(ctx context.Context, args *Args) (*Enricher, error) {
 		logger.Info("initialized DID client", "host", args.PLCHost)
 	}
 	if args.MilvusHost != "" {
-		if args.ImageVectorCollection == "" {
-			return nil, errors.New("empty image vector collection")
-		}
-
-		// Create a milvus client
 		client, err := milvusclient.New(ctx, &milvusclient.ClientConfig{
 			Address: args.MilvusHost,
 		})
