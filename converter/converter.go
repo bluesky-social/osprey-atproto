@@ -19,7 +19,7 @@ import (
 	"github.com/bluesky-social/go-util/pkg/bus/cursor"
 	"github.com/bluesky-social/go-util/pkg/bus/producer"
 	"github.com/bluesky-social/indigo/api/atproto"
-	"github.com/bluesky-social/indigo/atproto/data"
+	"github.com/bluesky-social/indigo/atproto/atdata"
 	"github.com/bluesky-social/indigo/events"
 	"github.com/bluesky-social/indigo/events/schedulers/parallel"
 	"github.com/bluesky-social/indigo/repo"
@@ -401,7 +401,7 @@ func (c *KafkaConverter) handleRepoCommit(ctx context.Context, evt *atproto.Sync
 					return
 				}
 
-				rec, err := data.UnmarshalCBOR(*recB)
+				rec, err := atdata.UnmarshalCBOR(*recB)
 				if err != nil {
 					logger.Error("failed to unmarshal record", "error", err)
 					return
@@ -439,7 +439,7 @@ func (c *KafkaConverter) handleRepoCommit(ctx context.Context, evt *atproto.Sync
 					return
 				}
 
-				rec, err := data.UnmarshalCBOR(*recB)
+				rec, err := atdata.UnmarshalCBOR(*recB)
 				if err != nil {
 					logger.Error("failed to unmarshal record", "error", err)
 					return
