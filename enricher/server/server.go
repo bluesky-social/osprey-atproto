@@ -367,7 +367,7 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 		for _, cid := range imageCids {
 			imgWg.Add(1)
 			func(cid string) {
-				defer wg.Done()
+				defer imgWg.Done()
 				bytes, err := en.cdn.GetImageBytes(ctx, event.Did, cid)
 				if err != nil {
 					logger.Error("failed to fetch image bytes", "did", event.Did, "cid", cid, "err", err)
@@ -376,7 +376,7 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 				images.Store(cid, bytes)
 			}(cid)
 		}
-		wg.Wait()
+		imgWg.Wait()
 	})
 
 	// Wait for all of the above to complete
