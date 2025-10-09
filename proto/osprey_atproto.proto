@@ -233,6 +233,13 @@ message ImageDispatchResults {
     optional string text = 3;  // OCR text result
   }
 
+  message RetinaHashResults {
+    optional bytes raw = 1;
+    optional string error = 2;
+    optional string hash = 3;
+    optional bool quality_too_low = 4;
+  }
+
   message PrescreenResults {
     optional bytes raw = 1;
     optional string error = 2;
@@ -244,4 +251,5 @@ message ImageDispatchResults {
   optional HiveResults hive = 3;
   optional RetinaResults retina = 4;
   optional PrescreenResults prescreen = 6;
+  optional RetinaHashResults retina_hash = 7;
 }

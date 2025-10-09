@@ -244,7 +244,8 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 	wg := &sync.WaitGroup{}
 	hiveResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_HiveResults]()
 	abyssResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_AbyssResults]()
-	retinaResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_RetinaResults]()
+	retinaOcrResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_RetinaResults]()
+	retinaHashResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_RetinaHashResults]()
 	prescreenResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_PrescreenResults]()
 	var ozoneRepoViewDetail []byte
 	var profileView []byte
@@ -464,20 +465,43 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 			wg.Add(1)
 			go func(img []byte) {
 				defer wg.Done()
-				logger := logger.With("processor", "retina", "image_cid", cid)
+				logger := logger.With("processor", "retina_ocr", "image_cid", cid)
 				logger.Info("dispatching image")
 				res, ocrText, err := en.retinaOcrClient.Scan(dispatchCtx, event.Did, cid, img)
 				if err != nil {
 					logger.Error("failed to scan image", "err", err)
-					retinaResults.Store(cid, &osprey.ImageDispatchResults_RetinaResults{
+					retinaOcrResults.Store(cid, &osprey.ImageDispatchResults_RetinaResults{
 						Error: asProtoErr(err),
 					})
 					return
 				}
 				logger.Info("scan successful")
-				retinaResults.Store(cid, &osprey.ImageDispatchResults_RetinaResults{
+				retinaOcrResults.Store(cid, &osprey.ImageDispatchResults_RetinaResults{
 					Raw:  res,
 					Text: &ocrText,
+				})
+			}(img)
+		}
+
+		if en.retinaHashClient != nil {
+			wg.Add(1)
+			go func(img []byte) {
+				defer wg.Done()
+				logger := logger.With("processor", "retina_hash", "image_cid", cid)
+				logger.Info("dispatching image")
+				res, resObj, err := en.retinaHashClient.Hash(dispatchCtx, event.Did, cid, img)
+				if err != nil {
+					logger.Error("failed to get image hash", "err", err)
+					retinaHashResults.Store(cid, &osprey.ImageDispatchResults_RetinaHashResults{
+						Error: asProtoErr(err),
+					})
+					return
+				}
+				logger.Info("hash successful")
+				retinaHashResults.Store(cid, &osprey.ImageDispatchResults_RetinaHashResults{
+					Raw:           res,
+					Hash:          &resObj.Hash,
+					QualityTooLow: &resObj.QualityTooLow,
 				})
 			}(img)
 		}
@@ -494,7 +518,8 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 		result := &osprey.ImageDispatchResults{Cid: cid}
 		result.Hive, _ = hiveResults.Load(cid)
 		result.Abyss, _ = abyssResults.Load(cid)
-		result.Retina, _ = retinaResults.Load(cid)
+		result.Retina, _ = retinaOcrResults.Load(cid)
+		result.RetinaHash, _ = retinaHashResults.Load(cid)
 		result.Prescreen, _ = prescreenResults.Load(cid)
 		imageResults[cid] = result
 		return true
