@@ -1728,6 +1728,8 @@ type ImageDispatchResults struct {
 	Retina        *ImageDispatchResults_RetinaResults     `protobuf:"bytes,4,opt,name=retina,proto3,oneof" json:"retina,omitempty"`
 	Prescreen     *ImageDispatchResults_PrescreenResults  `protobuf:"bytes,6,opt,name=prescreen,proto3,oneof" json:"prescreen,omitempty"`
 	RetinaHash    *ImageDispatchResults_RetinaHashResults `protobuf:"bytes,7,opt,name=retina_hash,json=retinaHash,proto3,oneof" json:"retina_hash,omitempty"`
+	Ncii          *ImageDispatchResults_NciiResults       `protobuf:"bytes,8,opt,name=ncii,proto3,oneof" json:"ncii,omitempty"`
+	Flagged       *ImageDispatchResults_FlaggedResults    `protobuf:"bytes,9,opt,name=flagged,proto3,oneof" json:"flagged,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1800,6 +1802,20 @@ func (x *ImageDispatchResults) GetPrescreen() *ImageDispatchResults_PrescreenRes
 func (x *ImageDispatchResults) GetRetinaHash() *ImageDispatchResults_RetinaHashResults {
 	if x != nil {
 		return x.RetinaHash
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults) GetNcii() *ImageDispatchResults_NciiResults {
+	if x != nil {
+		return x.Ncii
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults) GetFlagged() *ImageDispatchResults_FlaggedResults {
+	if x != nil {
+		return x.Flagged
 	}
 	return nil
 }
@@ -2112,6 +2128,174 @@ func (x *ImageDispatchResults_PrescreenResults) GetDecision() string {
 	return ""
 }
 
+type ImageDispatchResults_NciiResults struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Raw           []byte                 `protobuf:"bytes,1,opt,name=raw,proto3,oneof" json:"raw,omitempty"`
+	Error         *string                `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error,omitempty"`
+	IsMatch       *bool                  `protobuf:"varint,3,opt,name=is_match,json=isMatch,proto3,oneof" json:"is_match,omitempty"`
+	Score         *float64               `protobuf:"fixed64,4,opt,name=score,proto3,oneof" json:"score,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImageDispatchResults_NciiResults) Reset() {
+	*x = ImageDispatchResults_NciiResults{}
+	mi := &file_osprey_atproto_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageDispatchResults_NciiResults) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageDispatchResults_NciiResults) ProtoMessage() {}
+
+func (x *ImageDispatchResults_NciiResults) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageDispatchResults_NciiResults.ProtoReflect.Descriptor instead.
+func (*ImageDispatchResults_NciiResults) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{16, 5}
+}
+
+func (x *ImageDispatchResults_NciiResults) GetRaw() []byte {
+	if x != nil {
+		return x.Raw
+	}
+	return nil
+}
+
+func (x *ImageDispatchResults_NciiResults) GetError() string {
+	if x != nil && x.Error != nil {
+		return *x.Error
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_NciiResults) GetIsMatch() bool {
+	if x != nil && x.IsMatch != nil {
+		return *x.IsMatch
+	}
+	return false
+}
+
+func (x *ImageDispatchResults_NciiResults) GetScore() float64 {
+	if x != nil && x.Score != nil {
+		return *x.Score
+	}
+	return 0
+}
+
+type ImageDispatchResults_FlaggedResults struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Error         *string                `protobuf:"bytes,1,opt,name=error,proto3,oneof" json:"error,omitempty"`
+	IsMatch       *bool                  `protobuf:"varint,2,opt,name=is_match,json=isMatch,proto3,oneof" json:"is_match,omitempty"`
+	Action        *string                `protobuf:"bytes,3,opt,name=action,proto3,oneof" json:"action,omitempty"`                              // "tag", "label", "takedown", "report"
+	ActionLevel   *string                `protobuf:"bytes,4,opt,name=action_level,json=actionLevel,proto3,oneof" json:"action_level,omitempty"` // "record", "account"
+	ActionValue   *string                `protobuf:"bytes,5,opt,name=action_value,json=actionValue,proto3,oneof" json:"action_value,omitempty"`
+	AlwaysReport  *bool                  `protobuf:"varint,6,opt,name=always_report,json=alwaysReport,proto3,oneof" json:"always_report,omitempty"`
+	Description   *string                `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Score         *float64               `protobuf:"fixed64,8,opt,name=score,proto3,oneof" json:"score,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ImageDispatchResults_FlaggedResults) Reset() {
+	*x = ImageDispatchResults_FlaggedResults{}
+	mi := &file_osprey_atproto_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ImageDispatchResults_FlaggedResults) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ImageDispatchResults_FlaggedResults) ProtoMessage() {}
+
+func (x *ImageDispatchResults_FlaggedResults) ProtoReflect() protoreflect.Message {
+	mi := &file_osprey_atproto_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ImageDispatchResults_FlaggedResults.ProtoReflect.Descriptor instead.
+func (*ImageDispatchResults_FlaggedResults) Descriptor() ([]byte, []int) {
+	return file_osprey_atproto_proto_rawDescGZIP(), []int{16, 6}
+}
+
+func (x *ImageDispatchResults_FlaggedResults) GetError() string {
+	if x != nil && x.Error != nil {
+		return *x.Error
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_FlaggedResults) GetIsMatch() bool {
+	if x != nil && x.IsMatch != nil {
+		return *x.IsMatch
+	}
+	return false
+}
+
+func (x *ImageDispatchResults_FlaggedResults) GetAction() string {
+	if x != nil && x.Action != nil {
+		return *x.Action
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_FlaggedResults) GetActionLevel() string {
+	if x != nil && x.ActionLevel != nil {
+		return *x.ActionLevel
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_FlaggedResults) GetActionValue() string {
+	if x != nil && x.ActionValue != nil {
+		return *x.ActionValue
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_FlaggedResults) GetAlwaysReport() bool {
+	if x != nil && x.AlwaysReport != nil {
+		return *x.AlwaysReport
+	}
+	return false
+}
+
+func (x *ImageDispatchResults_FlaggedResults) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+func (x *ImageDispatchResults_FlaggedResults) GetScore() float64 {
+	if x != nil && x.Score != nil {
+		return *x.Score
+	}
+	return 0
+}
+
 var File_osprey_atproto_proto protoreflect.FileDescriptor
 
 const file_osprey_atproto_proto_rawDesc = "" +
@@ -2258,8 +2442,7 @@ const file_osprey_atproto_proto_rawDesc = "" +
 	"\n" +
 	"\b_did_docB\x0f\n" +
 	"\r_profile_viewB\x10\n" +
-	"\x0e_did_audit_log\"\x8d\n" +
-	"\n" +
+	"\x0e_did_audit_log\"\xee\x0f\n" +
 	"\x14ImageDispatchResults\x12\x10\n" +
 	"\x03cid\x18\x01 \x01(\tR\x03cid\x12D\n" +
 	"\x05abyss\x18\x02 \x01(\v2).osprey.ImageDispatchResults.AbyssResultsH\x00R\x05abyss\x88\x01\x01\x12A\n" +
@@ -2267,7 +2450,9 @@ const file_osprey_atproto_proto_rawDesc = "" +
 	"\x06retina\x18\x04 \x01(\v2*.osprey.ImageDispatchResults.RetinaResultsH\x02R\x06retina\x88\x01\x01\x12P\n" +
 	"\tprescreen\x18\x06 \x01(\v2-.osprey.ImageDispatchResults.PrescreenResultsH\x03R\tprescreen\x88\x01\x01\x12T\n" +
 	"\vretina_hash\x18\a \x01(\v2..osprey.ImageDispatchResults.RetinaHashResultsH\x04R\n" +
-	"retinaHash\x88\x01\x01\x1a\x90\x01\n" +
+	"retinaHash\x88\x01\x01\x12A\n" +
+	"\x04ncii\x18\b \x01(\v2(.osprey.ImageDispatchResults.NciiResultsH\x05R\x04ncii\x88\x01\x01\x12J\n" +
+	"\aflagged\x18\t \x01(\v2+.osprey.ImageDispatchResults.FlaggedResultsH\x06R\aflagged\x88\x01\x01\x1a\x90\x01\n" +
 	"\fAbyssResults\x12\x15\n" +
 	"\x03raw\x18\x01 \x01(\fH\x00R\x03raw\x88\x01\x01\x12\x19\n" +
 	"\x05error\x18\x02 \x01(\tH\x01R\x05error\x88\x01\x01\x12)\n" +
@@ -2306,13 +2491,42 @@ const file_osprey_atproto_proto_rawDesc = "" +
 	"\bdecision\x18\x03 \x01(\tH\x02R\bdecision\x88\x01\x01B\x06\n" +
 	"\x04_rawB\b\n" +
 	"\x06_errorB\v\n" +
-	"\t_decisionB\b\n" +
+	"\t_decision\x1a\xa3\x01\n" +
+	"\vNciiResults\x12\x15\n" +
+	"\x03raw\x18\x01 \x01(\fH\x00R\x03raw\x88\x01\x01\x12\x19\n" +
+	"\x05error\x18\x02 \x01(\tH\x01R\x05error\x88\x01\x01\x12\x1e\n" +
+	"\bis_match\x18\x03 \x01(\bH\x02R\aisMatch\x88\x01\x01\x12\x19\n" +
+	"\x05score\x18\x04 \x01(\x01H\x03R\x05score\x88\x01\x01B\x06\n" +
+	"\x04_rawB\b\n" +
+	"\x06_errorB\v\n" +
+	"\t_is_matchB\b\n" +
+	"\x06_score\x1a\x94\x03\n" +
+	"\x0eFlaggedResults\x12\x19\n" +
+	"\x05error\x18\x01 \x01(\tH\x00R\x05error\x88\x01\x01\x12\x1e\n" +
+	"\bis_match\x18\x02 \x01(\bH\x01R\aisMatch\x88\x01\x01\x12\x1b\n" +
+	"\x06action\x18\x03 \x01(\tH\x02R\x06action\x88\x01\x01\x12&\n" +
+	"\faction_level\x18\x04 \x01(\tH\x03R\vactionLevel\x88\x01\x01\x12&\n" +
+	"\faction_value\x18\x05 \x01(\tH\x04R\vactionValue\x88\x01\x01\x12(\n" +
+	"\ralways_report\x18\x06 \x01(\bH\x05R\falwaysReport\x88\x01\x01\x12%\n" +
+	"\vdescription\x18\a \x01(\tH\x06R\vdescription\x88\x01\x01\x12\x19\n" +
+	"\x05score\x18\b \x01(\x01H\aR\x05score\x88\x01\x01B\b\n" +
+	"\x06_errorB\v\n" +
+	"\t_is_matchB\t\n" +
+	"\a_actionB\x0f\n" +
+	"\r_action_levelB\x0f\n" +
+	"\r_action_valueB\x10\n" +
+	"\x0e_always_reportB\x0e\n" +
+	"\f_descriptionB\b\n" +
+	"\x06_scoreB\b\n" +
 	"\x06_abyssB\a\n" +
 	"\x05_hiveB\t\n" +
 	"\a_retinaB\f\n" +
 	"\n" +
 	"_prescreenB\x0e\n" +
-	"\f_retina_hash*t\n" +
+	"\f_retina_hashB\a\n" +
+	"\x05_nciiB\n" +
+	"\n" +
+	"\b_flagged*t\n" +
 	"\x12AtprotoSubjectKind\x12\x1d\n" +
 	"\x19ATPROTO_SUBJECT_KIND_NONE\x10\x00\x12\x1e\n" +
 	"\x1aATPROTO_SUBJECT_KIND_ACTOR\x10\x01\x12\x1f\n" +
@@ -2381,7 +2595,7 @@ func file_osprey_atproto_proto_rawDescGZIP() []byte {
 }
 
 var file_osprey_atproto_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
-var file_osprey_atproto_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_osprey_atproto_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_osprey_atproto_proto_goTypes = []any{
 	(AtprotoSubjectKind)(0),                        // 0: osprey.AtprotoSubjectKind
 	(AtprotoLabel)(0),                              // 1: osprey.AtprotoLabel
@@ -2414,13 +2628,15 @@ var file_osprey_atproto_proto_goTypes = []any{
 	(*ImageDispatchResults_RetinaResults)(nil),     // 28: osprey.ImageDispatchResults.RetinaResults
 	(*ImageDispatchResults_RetinaHashResults)(nil), // 29: osprey.ImageDispatchResults.RetinaHashResults
 	(*ImageDispatchResults_PrescreenResults)(nil),  // 30: osprey.ImageDispatchResults.PrescreenResults
-	nil,                           // 31: osprey.ImageDispatchResults.HiveResults.ClassesEntry
-	(*timestamppb.Timestamp)(nil), // 32: google.protobuf.Timestamp
+	(*ImageDispatchResults_NciiResults)(nil),       // 31: osprey.ImageDispatchResults.NciiResults
+	(*ImageDispatchResults_FlaggedResults)(nil),    // 32: osprey.ImageDispatchResults.FlaggedResults
+	nil,                           // 33: osprey.ImageDispatchResults.HiveResults.ClassesEntry
+	(*timestamppb.Timestamp)(nil), // 34: google.protobuf.Timestamp
 }
 var file_osprey_atproto_proto_depIdxs = []int32{
 	8,  // 0: osprey.OspreyInputEvent.data:type_name -> osprey.OspreyInputEventData
-	32, // 1: osprey.OspreyInputEvent.send_time:type_name -> google.protobuf.Timestamp
-	32, // 2: osprey.OspreyInputEventData.timestamp:type_name -> google.protobuf.Timestamp
+	34, // 1: osprey.OspreyInputEvent.send_time:type_name -> google.protobuf.Timestamp
+	34, // 2: osprey.OspreyInputEventData.timestamp:type_name -> google.protobuf.Timestamp
 	24, // 3: osprey.OspreyInputEventData.secret_data:type_name -> osprey.OspreyInputEventData.SecretDataEntry
 	2,  // 4: osprey.AtprotoLabelEffect.effect_kind:type_name -> osprey.AtprotoEffectKind
 	0,  // 5: osprey.AtprotoLabelEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
@@ -2438,7 +2654,7 @@ var file_osprey_atproto_proto_depIdxs = []int32{
 	0,  // 17: osprey.AtprotoReportEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
 	4,  // 18: osprey.AtprotoReportEffect.report_kind:type_name -> osprey.AtprotoReportKind
 	0,  // 19: osprey.BigQueryFlagEffect.subject_kind:type_name -> osprey.AtprotoSubjectKind
-	32, // 20: osprey.ResultEvent.send_time:type_name -> google.protobuf.Timestamp
+	34, // 20: osprey.ResultEvent.send_time:type_name -> google.protobuf.Timestamp
 	9,  // 21: osprey.ResultEvent.labels:type_name -> osprey.AtprotoLabelEffect
 	10, // 22: osprey.ResultEvent.tags:type_name -> osprey.AtprotoTagEffect
 	11, // 23: osprey.ResultEvent.takedowns:type_name -> osprey.AtprotoTakedownEffect
@@ -2448,11 +2664,11 @@ var file_osprey_atproto_proto_depIdxs = []int32{
 	15, // 27: osprey.ResultEvent.acknowledgements:type_name -> osprey.AtprotoAcknowledgeEffect
 	16, // 28: osprey.ResultEvent.reports:type_name -> osprey.AtprotoReportEffect
 	17, // 29: osprey.ResultEvent.bigqueryFlags:type_name -> osprey.BigQueryFlagEffect
-	32, // 30: osprey.FirehoseEvent.timestamp:type_name -> google.protobuf.Timestamp
+	34, // 30: osprey.FirehoseEvent.timestamp:type_name -> google.protobuf.Timestamp
 	5,  // 31: osprey.FirehoseEvent.kind:type_name -> osprey.EventKind
 	20, // 32: osprey.FirehoseEvent.commit:type_name -> osprey.Commit
 	6,  // 33: osprey.Commit.operation:type_name -> osprey.CommitOperation
-	32, // 34: osprey.ModerationEnrichedFirehoseRecordEvent.timestamp:type_name -> google.protobuf.Timestamp
+	34, // 34: osprey.ModerationEnrichedFirehoseRecordEvent.timestamp:type_name -> google.protobuf.Timestamp
 	6,  // 35: osprey.ModerationEnrichedFirehoseRecordEvent.operation:type_name -> osprey.CommitOperation
 	25, // 36: osprey.ModerationEnrichedFirehoseRecordEvent.image_results:type_name -> osprey.ModerationEnrichedFirehoseRecordEvent.ImageResultsEntry
 	26, // 37: osprey.ImageDispatchResults.abyss:type_name -> osprey.ImageDispatchResults.AbyssResults
@@ -2460,13 +2676,15 @@ var file_osprey_atproto_proto_depIdxs = []int32{
 	28, // 39: osprey.ImageDispatchResults.retina:type_name -> osprey.ImageDispatchResults.RetinaResults
 	30, // 40: osprey.ImageDispatchResults.prescreen:type_name -> osprey.ImageDispatchResults.PrescreenResults
 	29, // 41: osprey.ImageDispatchResults.retina_hash:type_name -> osprey.ImageDispatchResults.RetinaHashResults
-	23, // 42: osprey.ModerationEnrichedFirehoseRecordEvent.ImageResultsEntry.value:type_name -> osprey.ImageDispatchResults
-	31, // 43: osprey.ImageDispatchResults.HiveResults.classes:type_name -> osprey.ImageDispatchResults.HiveResults.ClassesEntry
-	44, // [44:44] is the sub-list for method output_type
-	44, // [44:44] is the sub-list for method input_type
-	44, // [44:44] is the sub-list for extension type_name
-	44, // [44:44] is the sub-list for extension extendee
-	0,  // [0:44] is the sub-list for field type_name
+	31, // 42: osprey.ImageDispatchResults.ncii:type_name -> osprey.ImageDispatchResults.NciiResults
+	32, // 43: osprey.ImageDispatchResults.flagged:type_name -> osprey.ImageDispatchResults.FlaggedResults
+	23, // 44: osprey.ModerationEnrichedFirehoseRecordEvent.ImageResultsEntry.value:type_name -> osprey.ImageDispatchResults
+	33, // 45: osprey.ImageDispatchResults.HiveResults.classes:type_name -> osprey.ImageDispatchResults.HiveResults.ClassesEntry
+	46, // [46:46] is the sub-list for method output_type
+	46, // [46:46] is the sub-list for method input_type
+	46, // [46:46] is the sub-list for extension type_name
+	46, // [46:46] is the sub-list for extension extendee
+	0,  // [0:46] is the sub-list for field type_name
 }
 
 func init() { file_osprey_atproto_proto_init() }
@@ -2489,13 +2707,15 @@ func file_osprey_atproto_proto_init() {
 	file_osprey_atproto_proto_msgTypes[21].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[22].OneofWrappers = []any{}
 	file_osprey_atproto_proto_msgTypes[23].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[24].OneofWrappers = []any{}
+	file_osprey_atproto_proto_msgTypes[25].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_osprey_atproto_proto_rawDesc), len(file_osprey_atproto_proto_rawDesc)),
 			NumEnums:      7,
-			NumMessages:   25,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

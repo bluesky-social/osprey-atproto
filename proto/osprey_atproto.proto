@@ -246,10 +246,30 @@ message ImageDispatchResults {
     optional string decision = 3; // "nsfw", "sfw"
   }
 
+  message NciiResults {
+    optional bytes raw = 1;
+    optional string error = 2;
+    optional bool is_match = 3;
+    optional double score = 4;
+  }
+
+  message FlaggedResults {
+    optional string error = 1;
+    optional bool is_match = 2;
+    optional string action = 3; // "tag", "label", "takedown", "report"
+    optional string action_level = 4; // "record", "account"
+    optional string action_value = 5;
+    optional bool always_report = 6;
+    optional string description = 7;
+    optional double score = 8;
+  }
+
   string cid = 1;
   optional AbyssResults abyss = 2;
   optional HiveResults hive = 3;
   optional RetinaResults retina = 4;
   optional PrescreenResults prescreen = 6;
   optional RetinaHashResults retina_hash = 7;
+  optional NciiResults ncii = 8;
+  optional FlaggedResults flagged = 9;
 }

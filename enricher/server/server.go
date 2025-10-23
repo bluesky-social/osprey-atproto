@@ -20,50 +20,62 @@ import (
 	"github.com/bluesky-social/osprey-atproto/enricher/appview"
 	"github.com/bluesky-social/osprey-atproto/enricher/cdn"
 	"github.com/bluesky-social/osprey-atproto/enricher/did"
+	flaggedimage "github.com/bluesky-social/osprey-atproto/enricher/flagged-image"
 	"github.com/bluesky-social/osprey-atproto/enricher/hive"
+	"github.com/bluesky-social/osprey-atproto/enricher/ncii"
 	"github.com/bluesky-social/osprey-atproto/enricher/ozone"
 	"github.com/bluesky-social/osprey-atproto/enricher/prescreen"
 	retinahash "github.com/bluesky-social/osprey-atproto/enricher/retina-hash"
 	retinaocr "github.com/bluesky-social/osprey-atproto/enricher/retina-ocr"
 	osprey "github.com/bluesky-social/osprey-atproto/proto/go"
+	"github.com/milvus-io/milvus/client/v2/milvusclient"
 	"github.com/puzpuzpuz/xsync/v3"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Enricher struct {
-	logger           *slog.Logger
-	producer         *producer.Producer[*osprey.OspreyInputEvent]
-	consumer         *consumer.Consumer[*osprey.FirehoseEvent]
-	cdn              *cdn.Client
-	abyssClient      *abyss.Client
-	hiveClient       *hive.Client
-	retinaOcrClient  *retinaocr.Client
-	retinaHashClient *retinahash.Client
-	prescreenClient  *prescreen.Client
-	ozoneClient      *ozone.Client
-	appviewClient    *appview.Client
-	didClient        *did.Client
+	logger             *slog.Logger
+	producer           *producer.Producer[*osprey.OspreyInputEvent]
+	consumer           *consumer.Consumer[*osprey.FirehoseEvent]
+	cdn                *cdn.Client
+	abyssClient        *abyss.Client
+	hiveClient         *hive.Client
+	retinaOcrClient    *retinaocr.Client
+	retinaHashClient   *retinahash.Client
+	prescreenClient    *prescreen.Client
+	ozoneClient        *ozone.Client
+	appviewClient      *appview.Client
+	didClient          *did.Client
+	nciiClient         *ncii.Client
+	flaggedImageClient *flaggedimage.Client
+
+	milvusClient *milvusclient.Client
 }
 
 type Args struct {
-	KafkaBootstrapServers  []string
-	SASLUsername           string
-	SASLPassword           string
-	InputTopic             string
-	OutputTopic            string
-	ImageCdnURL            string
-	AbyssURL               string
-	AbyssAdminPassword     string
-	HiveAPIToken           string
-	RetinaOcrURL           string
-	RetinaHashURL          string
-	PrescreenHost          string
-	OzoneHost              string
-	OzoneAdminToken        string
-	AppviewHost            string
-	AppviewRatelimitBypass string
-	PLCHost                string
-	Logger                 *slog.Logger
+	KafkaBootstrapServers   []string
+	SASLUsername            string
+	SASLPassword            string
+	InputTopic              string
+	OutputTopic             string
+	ImageCdnURL             string
+	AbyssURL                string
+	AbyssAdminPassword      string
+	HiveAPIToken            string
+	RetinaOcrURL            string
+	RetinaHashURL           string
+	PrescreenHost           string
+	OzoneHost               string
+	OzoneAdminToken         string
+	AppviewHost             string
+	AppviewRatelimitBypass  string
+	PLCHost                 string
+	MilvusHost              string
+	NciiCollection          string
+	NciiMinDistance         float64
+	FlaggedImageCollection  string
+	FlaggedImageMinDistance float64
+	Logger                  *slog.Logger
 }
 
 func New(ctx context.Context, args *Args) (*Enricher, error) {
@@ -131,8 +143,47 @@ func New(ctx context.Context, args *Args) (*Enricher, error) {
 		en.didClient = didClient
 		logger.Info("initialized DID client", "host", args.PLCHost)
 	}
+	if args.MilvusHost != "" {
+		client, err := milvusclient.New(ctx, &milvusclient.ClientConfig{
+			Address: args.MilvusHost,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to create new Milvus client: %w", err)
+		}
+		defer client.Close(ctx)
 
-	secureProducer, err := producer.New(ctx, logger, args.KafkaBootstrapServers, args.OutputTopic,
+		en.milvusClient = client
+
+		if args.NciiCollection != "" && args.NciiMinDistance != 0 {
+			// Create ncii vector lookup client
+			nciiClient, err := ncii.NewClient(ctx, &ncii.ClientArgs{
+				Logger:      logger.With("component", "ncii-client"),
+				Client:      client,
+				MinDistance: args.NciiMinDistance,
+				Collection:  args.NciiCollection,
+			})
+			if err != nil {
+				return nil, fmt.Errorf("failed to create ncii client: %w", err)
+			}
+			en.nciiClient = nciiClient
+		}
+
+		if args.FlaggedImageCollection != "" && args.FlaggedImageMinDistance != 0 {
+			// Create flagged vector lookup client
+			flaggedImageClient, err := flaggedimage.NewClient(ctx, &flaggedimage.ClientArgs{
+				Logger:      logger.With("component", "flagged-image"),
+				Client:      client,
+				MinDistance: args.FlaggedImageMinDistance,
+				Collection:  args.FlaggedImageCollection,
+			})
+			if err != nil {
+				return nil, fmt.Errorf("failed to create flagged image client: %w", err)
+			}
+			en.flaggedImageClient = flaggedImageClient
+		}
+	}
+
+	busProducer, err := producer.New(ctx, logger, args.KafkaBootstrapServers, args.OutputTopic,
 		producer.WithCredentials[*osprey.OspreyInputEvent](args.SASLUsername, args.SASLPassword),
 		producer.WithEnsureTopic[*osprey.OspreyInputEvent](true),
 		producer.WithTopicPartitions[*osprey.OspreyInputEvent](100),
@@ -141,7 +192,7 @@ func New(ctx context.Context, args *Args) (*Enricher, error) {
 	if err != nil {
 		return nil, errors.Join(err, errors.New("failed to create secure Kafka producer"))
 	}
-	en.producer = secureProducer
+	en.producer = busProducer
 
 	busConsumer, err := consumer.New(logger, args.KafkaBootstrapServers, args.InputTopic, "enricher-consumers",
 		consumer.WithOffset[*osprey.FirehoseEvent](consumer.OffsetEnd),
@@ -247,6 +298,8 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 	retinaOcrResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_RetinaResults]()
 	retinaHashResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_RetinaHashResults]()
 	prescreenResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_PrescreenResults]()
+	nciiResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_NciiResults]()
+	flaggedImageResults := xsync.NewMapOf[string, *osprey.ImageDispatchResults_FlaggedResults]()
 	var ozoneRepoViewDetail []byte
 	var profileView []byte
 	var didDoc []byte
@@ -503,6 +556,69 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 					Hash:          &resObj.Hash,
 					QualityTooLow: &resObj.QualityTooLow,
 				})
+
+				// If we got a hash back and the quality was not too low, we want to check for any ncii etc. matches
+				if resObj.Hash != "" && !resObj.QualityTooLow {
+					// Create a waitgroup to process vector lookups
+					var vectorWg sync.WaitGroup
+
+					// Check for ncii matches if there is a client
+					if en.nciiClient != nil {
+						vectorWg.Add(1)
+						go func() {
+							defer vectorWg.Done()
+							logger := logger.With("processor", "ncii_client", "image_cid", cid)
+
+							match, score, err := en.nciiClient.Scan(ctx, resObj.Hash)
+							if err != nil {
+								logger.Error("failed to lookup ncii match", "err", err)
+								nciiResults.Store(cid, &osprey.ImageDispatchResults_NciiResults{
+									Error: asProtoErr(err),
+								})
+							} else {
+								logger.Info("ncii scan successful")
+								nciiResults.Store(cid, &osprey.ImageDispatchResults_NciiResults{
+									IsMatch: &match,
+									Score:   &score,
+								})
+							}
+						}()
+					}
+
+					if en.flaggedImageClient != nil {
+						vectorWg.Add(1)
+						go func() {
+							defer vectorWg.Done()
+							logger := logger.With("processor", "flagged_image_client", "image_cid", cid)
+
+							res, err := en.flaggedImageClient.Scan(ctx, resObj.Hash)
+							if err != nil {
+								logger.Error("failed to lookup flagged image match", "err", err)
+								flaggedImageResults.Store(cid, &osprey.ImageDispatchResults_FlaggedResults{
+									Error: asProtoErr(err),
+								})
+							} else if !res.IsMatch {
+								logger.Info("flagged scan successful")
+								flaggedImageResults.Store(cid, &osprey.ImageDispatchResults_FlaggedResults{
+									IsMatch: &res.IsMatch,
+								})
+							} else {
+								logger.Info("flagged scan successful")
+								flaggedImageResults.Store(cid, &osprey.ImageDispatchResults_FlaggedResults{
+									IsMatch:      &res.IsMatch,
+									Action:       &res.Action,
+									ActionLevel:  &res.ActionLevel,
+									ActionValue:  &res.ActionValue,
+									AlwaysReport: &res.AlwaysReport,
+									Description:  &res.Description,
+									Score:        &res.Score,
+								})
+							}
+						}()
+					}
+
+					vectorWg.Wait()
+				}
 			}(img)
 		}
 
@@ -521,6 +637,8 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 		result.Retina, _ = retinaOcrResults.Load(cid)
 		result.RetinaHash, _ = retinaHashResults.Load(cid)
 		result.Prescreen, _ = prescreenResults.Load(cid)
+		result.Ncii, _ = nciiResults.Load(cid)
+		result.Flagged, _ = flaggedImageResults.Load(cid)
 		imageResults[cid] = result
 		return true
 	})
