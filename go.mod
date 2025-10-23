@@ -5,7 +5,7 @@ go 1.25.1
 require (
 	cloud.google.com/go/bigquery v1.70.0
 	github.com/bluesky-social/go-util v0.0.0-20250911184242-2bd2bc840175
-	github.com/bluesky-social/indigo v0.0.0-20250909204019-c5eaa30f683f
+	github.com/bluesky-social/indigo v0.0.0-20251009212240-20524de167fe
 	github.com/bradfitz/gomemcache v0.0.0-20250403215159-8d39553ac7cf
 	github.com/carlmjohnson/versioninfo v0.22.5
 	github.com/golang-jwt/jwt/v5 v5.3.0

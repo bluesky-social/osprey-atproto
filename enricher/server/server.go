@@ -15,7 +15,7 @@ import (
 
 	"github.com/bluesky-social/go-util/pkg/bus/consumer"
 	"github.com/bluesky-social/go-util/pkg/bus/producer"
-	"github.com/bluesky-social/indigo/atproto/data"
+	"github.com/bluesky-social/indigo/atproto/atdata"
 	"github.com/bluesky-social/osprey-atproto/enricher/abyss"
 	"github.com/bluesky-social/osprey-atproto/enricher/appview"
 	"github.com/bluesky-social/osprey-atproto/enricher/cdn"
@@ -403,12 +403,12 @@ func (en *Enricher) handleEvent(ctx context.Context, event *osprey.FirehoseEvent
 	}
 
 	// Download all the images while other things are processing
-	rec, err := data.UnmarshalJSON(event.Commit.Record)
+	rec, err := atdata.UnmarshalJSON(event.Commit.Record)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal commit record: %w", err)
 	}
 
-	blobs := data.ExtractBlobs(rec)
+	blobs := atdata.ExtractBlobs(rec)
 	imageCids := []string{}
 	videoCids := []string{}
 
